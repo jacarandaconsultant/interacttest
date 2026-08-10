@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Arbiter's Path - Aethelgard</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #8b0000;
+            --accent-hover: #b22222;
+            --card-bg: #2a2a2a;
+            --border-color: #444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        #game-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            min-height: 600px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            margin: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(to bottom, #111, #2a2a2a);
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #d4af37;
+            font-family: 'Georgia', serif;
+            letter-spacing: 2px;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #story-text {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            white-space: pre-line;
+            transition: opacity 0.3s ease;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: auto;
+        }
+
+        .btn {
+            background-color: #333;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 15px 20px;
+            font-size: 1em;
+            text-align: left;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+            border-color: #ff4500;
+            transform: translateX(5px);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            font-size: 1.1em;
+            background-color: #111;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        #start-screen, #result-screen {
+            text-align: center;
+        }
+
+        #start-screen p, #result-screen p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        #start-btn, #restart-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #start-btn:hover, #restart-btn:hover {
+            background-color: var(--accent-hover);
+            transform: none;
+        }
+
+        .flavor-toast {
+            font-style: italic;
+            color: #d4af37;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(212, 175, 55, 0.08);
+            border-left: 4px solid #d4af37;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-box {
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #333;
+        }
+        
+        .score-row:last-child {
+            border-bottom: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div class="header">
+        <h1>THE ARBITER'S PATH</h1>
+    </div>
+
+    <div class="content-area">
+        <div id="start-screen">
+            <p>Di kota Aethelgard yang diliputi bayang-bayang politik dan misteri kuno, Anda ditunjuk sebagai Arbiter yang baru. Keputusan Anda akan membentuk masa depan kota ini.</p>
+            <div class="input-group">
+                <input type="text" id="player-name" placeholder="Masukkan nama Anda..." autocomplete="off">
+                <button id="start-btn" onclick="startGame()">Mulai Perjalanan</button>
+            </div>
+        </div>
+
+        <div id="game-screen" style="display: none;">
+            <div id="flavor-toast" class="flavor-toast"></div>
+            <div id="story-text"></div>
+            <div id="options" class="options-container"></div>
+        </div>
+
+        <div id="result-screen" style="display: none;">
+            <h2>Kisah Anda Telah Ditulis, <span id="end-name"></span></h2>
+            <p>Konferensi telah berakhir dan reruntuhan kembali tenang. Tindakan-tindakan Anda di Aethelgard telah meninggalkan jejak yang dapat diukur.</p>
+            
+            <div class="score-box">
+                <h3 style="margin-top:0; color:#d4af37; text-align:center;">Kalkulasi Mental (Raw Score)</h3>
+                <div id="score-details"></div>
+            </div>
+
+            <p style="font-size: 0.9em; color: #aaa;">Skor maksimal untuk tiap dimensi adalah 24 (6 item). Skor mencerminkan derajat trait berdasarkan kecenderungan tindakan Anda di lapangan.</p>
+            
+            <button id="restart-btn" onclick="resetGame()">Mengerjakan Lagi</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let playerName = "";
+    let currentStep = 0;
+    
+    let scores = { E: 0, A: 0, C: 0, N: 0, O: 0 };
+    let nextFlavorText = "";
+
+    const storyNodes = [
+        {
+            type: "Flavor",
+            text: "Angin dingin menyapu wajah Anda saat kereta kuda berhenti di depan Markas Komando Aethelgard. Sebagai Arbiter yang baru ditunjuk, ini adalah hari pertama Anda. Penjaga gerbang menatap Anda dengan raut wajah kaku.",
+            options: [
+                { text: "Saya mengangguk singkat dan melangkah masuk tanpa bicara.", flavorText: "Penjaga itu balas mengangguk dengan hormat. Anda memulai hari dengan ketenangan yang dingin." },
+                { text: "Saya menyapa penjaga tersebut dan menanyakan keadaan markas hari ini.", flavorText: "Penjaga itu sedikit terkejut namun membalas sapaan Anda dengan hangat, sedikit mencairkan suasana kaku di gerbang." }
+            ]
+        },
+        {
+            type: "O", 
+            text: "Anda diantar menuju ruang kerja Anda. Ruangan itu sangat luas, namun dinding batunya dibiarkan kosong melompong tanpa hiasan apapun, hanya ada satu meja kayu tua dan kursi besi.",
+            options: [
+                { text: "Saya segera meminta staf untuk membawa permadani, lukisan peta, atau tanaman agar ruangan ini terasa lebih hidup dan menginspirasi.", score: 4, flavorText: "Staf segera membawakan beberapa ornamen antik. Ruangan yang hidup membuat pikiran Anda terasa lebih terbuka untuk bekerja." },
+                { text: "Saya akan menambahkan satu atau dua pajangan kecil nanti agar suasana ruangan tidak terlalu kaku saat bekerja.", score: 3, flavorText: "Anda mencatat dalam hati untuk mencari hiasan nanti. Untuk saat ini, Anda mengatur kursi dan bersiap." },
+                { text: "Saya tidak terlalu peduli. Asalkan mejanya cukup luas untuk dokumen, ruangan ini sudah memadai.", score: 2, flavorText: "Anda mengusap meja kayu itu, mengabaikan dinding kosong di sekitar. Fungsionalitas adalah yang utama." },
+                { text: "Saya justru menyukai ruangan yang benar-benar polos. Dekorasi apa pun hanya akan menjadi gangguan visual bagi saya.", score: 1, flavorText: "Kekosongan ruangan ini justru membantu Anda menjernihkan pikiran dari segala macam distraksi duniawi." }
+            ]
+        },
+        {
+            type: "C", 
+            text: "Tak lama, Lyra, sang Pengarsip Utama, masuk membawa tumpukan besar gulungan perkamen berisi laporan intelijen, daftar logistik, dan peta wilayah yang saling tumpang tindih. Ia meletakkannya begitu saja di meja Anda.",
+            options: [
+                { text: "Sebelum membaca isinya, saya langsung menyortir dan mengelompokkan gulungan-gulungan tersebut berdasarkan kategori dan tingkat urgensi.", score: 4, flavorText: "Lyra tersenyum tipis melihat Anda dengan cekatan mengubah tumpukan kacau itu menjadi deretan arsip yang terstruktur." },
+                { text: "Saya memisahkan dokumen yang menurut saya penting di satu sisi, dan menumpuk sisanya di sisi lain agar tidak menghalangi.", score: 3, flavorText: "Setidaknya kini Anda tahu mana yang harus dibaca lebih dulu, membiarkan dokumen logistik biasa di sudut meja." },
+                { text: "Saya mengambil gulungan yang ada di tumpukan paling atas satu per satu dan membacanya tanpa perlu menyusunnya ulang.", score: 2, flavorText: "Anda menarik gulungan teratas. Menata ulang seluruh tumpukan hanya akan membuang waktu Anda." },
+                { text: "Saya membiarkan tumpukan itu berantakan di meja. Mencari-cari dokumen di antara tumpukan adalah hal yang biasa bagi saya.", score: 1, flavorText: "Lyra menatap tumpukan berantakan itu dengan ragu, namun Anda membuktikan bisa menemukan apa yang Anda butuhkan." }
+            ]
+        },
+        {
+            type: "O", 
+            text: "Saat membaca salah satu laporan, Lyra menyebutkan tentang penemuan anomali sihir di Reruntuhan Bawah Kota. Ia mulai menjelaskan teori rumit tentang resonansi kristal kuno yang melampaui logika sihir standar.",
+            options: [
+                { text: "Saya meminta Lyra menjelaskan lebih dalam. Teori yang rumit dan tidak biasa seperti ini sangat memancing rasa ingin tahu saya.", score: 4, flavorText: "Mata Anda berbinar mendengar konsep yang melampaui nalar. Diskusi panjang itu membuka wawasan baru bagi Anda." },
+                { text: "Saya mendengarkan penjelasannya dengan saksama karena hal itu mungkin berguna untuk investigasi ke depan.", score: 3, flavorText: "Anda mendengarkan dengan penuh perhatian, mencatat beberapa poin yang berpotensi menjadi kunci masalah." },
+                { text: "Saya mendengarkan sekilas, namun meminta Lyra untuk langsung menyimpulkan inti masalahnya saja.", score: 2, flavorText: "Lyra menghela napas dan mempercepat penjelasannya ke bagian praktis sesuai permintaan Anda." },
+                { text: "Saya memotong penjelasannya. Teori abstrak membuang waktu, saya hanya butuh laporan praktis mengenai bahayanya.", score: 1, flavorText: "Lyra segera menutup buku teorinya dan hanya menyebutkan tingkat ancaman fisik yang ada di lokasi." }
+            ]
+        },
+        {
+            type: "Flavor",
+            text: "Berbekal laporan tersebut, Anda menuju Ruang Strategi. Kaelen, Komandan Militer yang ditakuti, sedang memberikan instruksi keras kepada para kapten penjaga mengenai persiapan Konferensi Puncak antar-faksi yang akan datang.",
+            options: [
+                { text: "Saya melangkah masuk dan berdiri di samping meja strategi, siap mendengarkan.", flavorText: "Kehadiran Anda di sisi meja membuat beberapa kapten memperbaiki postur berdirinya dan melirik Anda dengan penuh antisipasi." },
+                { text: "Saya bersandar di dekat pintu, mengamati dinamika ruangan terlebih dahulu.", flavorText: "Anda membaca situasi dari kejauhan. Posisi Kaelen di tengah ruangan benar-benar mendominasi seluruh kapten." }
+            ]
+        },
+        {
+            type: "N", 
+            text: "Melihat bagaimana Kaelen memimpin dengan aura otoritas yang sangat alami dan dituruti oleh semua orang tanpa ragu, sebuah pemikiran melintas di benak Anda terkait posisi Anda yang baru.",
+            options: [
+                { text: "Saya merasa sangat kecil. Saya yakin saya tidak akan pernah bisa memiliki kemampuan memimpin dan wibawa sebesar Kaelen.", score: 4, flavorText: "Perasaan inferior itu menggerogoti dada Anda sejenak, membuat Anda meremas pinggiran jubah Anda tanpa sadar." },
+                { text: "Saya meragukan apakah saya bisa mendapatkan rasa hormat dari para penjaga seperti yang Kaelen dapatkan.", score: 3, flavorText: "Keraguan itu melintas, membuat Anda memikirkan kembali strategi pendekatan Anda kepada para prajurit." },
+                { text: "Saya menyadari Kaelen memiliki gayanya sendiri, namun saya yakin saya bisa memimpin dengan cara saya sendiri seiring waktu.", score: 2, flavorText: "Anda menarik napas panjang. Kaelen adalah prajurit, sedangkan Anda adalah Arbiter; otoritas mengambil bentuk yang berbeda." },
+                { text: "Saya tidak merasa terintimidasi sama sekali. Kemampuannya bukan tolok ukur untuk menilai kemampuan diri saya sendiri.", score: 1, flavorText: "Anda menatap Kaelen dengan tatapan setara, sama sekali tidak terpengaruh oleh dominasi fisiknya." }
+            ]
+        },
+        {
+            type: "E", 
+            text: "Kaelen memaparkan rencananya untuk menarik pasukan dari Reruntuhan demi menjaga keamanan Konferensi Puncak. Anda melihat celah fatal dalam rencananya yang bisa membahayakan kota, namun belum ada yang meminta pendapat Anda.",
+            options: [
+                { text: "Saya langsung menyela dan memaparkan celah tersebut dengan lantang di depan semua orang agar rencana segera direvisi.", score: 4, flavorText: "Seluruh mata tertuju pada Anda. Kaelen terdiam sejenak, tampak terkejut namun perlahan mempertimbangkan ketegasan Anda." },
+                { text: "Saya mengangkat tangan dan menyuarakan pendapat saya mengenai kelemahan rencana tersebut meskipun tidak ditanya.", score: 3, flavorText: "Interupsi Anda menghentikan diskusi. Beberapa kapten mengangguk setuju dengan poin yang Anda angkat." },
+                { text: "Saya menunggu sampai Kaelen selesai bicara dan menanyakan apakah ada masukan, baru saya menyampaikan pendapat saya.", score: 2, flavorText: "Anda menunggu momen yang tepat. Saat Kaelen membuka forum, suara Anda mengisi ruangan dengan analisis yang tenang." },
+                { text: "Saya menyimpan pendapat itu sendiri. Jika mereka tidak meminta pandangan saya, saya tidak perlu repot-repot berbicara.", score: 1, flavorText: "Anda tetap diam. Rencana Kaelen disetujui, dan celah itu tetap menjadi rahasia di dalam pikiran Anda." }
+            ]
+        },
+        {
+            type: "C", 
+            text: "Setelah berdebat, Kaelen akhirnya menugaskan Anda untuk memimpin ekspedisi kecil ke Reruntuhan Bawah Kota untuk memastikan tidak ada ancaman. Anda akan ditemani Elara, seorang prajurit muda. Reruntuhan itu gelap dan penuh jebakan.",
+            options: [
+                { text: "Sebelum berangkat, saya menyusun rencana detail: rute evakuasi, sinyal darurat, dan pembagian peran yang sangat spesifik.", score: 4, flavorText: "Elara tampak lega melihat Anda telah menyiapkan segalanya. Rencana yang matang membuat langkah kalian lebih mantap." },
+                { text: "Saya membuat rencana dasar mengenai arah mana yang akan kami ambil dan apa yang harus dilakukan jika diserang.", score: 3, flavorText: "Dengan peta kasar dan instruksi dasar, kalian mulai menuruni tangga batu menuju kegelapan." },
+                { text: "Saya hanya menyiapkan senjata dan perbekalan. Kita bisa menentukan arah saat sudah berada di dalam.", score: 2, flavorText: "Terlalu banyak teori tidak berguna di lapangan. Anda memilih mempercayakan insting bertahan hidup saat di dalam." },
+                { text: "Saya langsung membawa Elara masuk. Terlalu banyak merencanakan sesuatu yang tidak pasti hanya akan membuang waktu.", score: 1, flavorText: "Tanpa basa-basi, Anda mendorong pintu reruntuhan. Elara bergegas menyusul langkah cepat Anda." }
+            ]
+        },
+        {
+            type: "O", 
+            text: "Di kedalaman reruntuhan, obor kalian menerangi sebuah gua bawah tanah berskala raksasa. Gua itu dipenuhi formasi kristal biru yang memancarkan cahaya lembut, memantul di dinding-dinding berukir peninggalan era lampau.",
+            options: [
+                { text: "Saya terdiam cukup lama, benar-benar merasa takjub dan terharu melihat keindahan arsitektur dan alam yang luar biasa ini.", score: 4, flavorText: "Napas Anda tertahan. Estetika murni dari tempat ini menyentuh sisi emosional Anda, membuat Anda lupa sejenak akan bahaya." },
+                { text: "Saya menyempatkan diri untuk berhenti sejenak dan mengagumi pemandangan indah tersebut sebelum melanjutkan tugas.", score: 3, flavorText: "Anda membiarkan diri Anda menikmati pemandangan itu selama beberapa menit, menyerap keindahan kuno tersebut." },
+                { text: "Saya mengakui bahwa tempat ini bagus, namun saya segera mengalihkan fokus kembali ke tujuan ekspedisi.", score: 2, flavorText: "Pandangan Anda segera beralih dari dinding kristal ke jejak kaki di lantai, kembali ke mode investigasi." },
+                { text: "Saya sama sekali tidak peduli dengan pemandangan itu. Batu bersinar tetaplah batu, saya hanya memikirkan ancaman di sekitar.", score: 1, flavorText: "Cahaya kristal itu justru mengganggu penglihatan Anda. Anda menyipitkan mata, mencari tanda-tanda musuh." }
+            ]
+        },
+        {
+            type: "O", 
+            text: "Jalan utama terputus oleh jurang yang sangat lebar. Tidak ada jembatan, dan mekanisme roda gigi purba di sekitarnya sudah hancur berserakan. Anda harus mencari cara agar Anda dan Elara bisa menyeberang.",
+            options: [
+                { text: "Saya sangat menikmati tantangan ini dan dengan antusias memikirkan ide-ide gila dan out-of-the-box memanfaatkan lingkungan sekitar untuk menyeberang.", score: 4, flavorText: "Pikiran Anda berlari kencang, merangkai kemungkinan dari tumpukan puing, rantai putus, dan stalaktit. Proses kreatif ini terasa menyenangkan." },
+                { text: "Saya mencoba memikirkan beberapa cara alternatif yang tidak biasa untuk menyelesaikan masalah jalan buntu ini.", score: 3, flavorText: "Anda mengitari jurang, menimbang beberapa solusi alternatif di luar metode standar untuk mencari celah penyeberangan." },
+                { text: "Saya mencari cara logis yang paling masuk akal tanpa perlu memikirkan ide-ide yang terlalu kreatif atau aneh.", score: 2, flavorText: "Anda mencari rute paling aman dan rasional—memanjat tebing samping atau mencari tuas tersembunyi yang masih utuh." },
+                { text: "Saya benci situasi tanpa solusi pasti. Jika tidak ada jalan yang jelas, lebih baik membatalkan ekspedisi dan kembali.", score: 1, flavorText: "Anda mendecakkan lidah karena frustrasi. Tidak ada gunanya mengambil risiko tanpa jaminan keberhasilan." }
+            ]
+        },
+        {
+            type: "A", 
+            text: "Setelah berhasil menyeberang, dari balik bayang-bayang muncul sosok berjubah yang mengaku sebagai 'Utusan Fraksi Bawah'. Dia menawarkan informasi mengenai anomali sihir, tapi Elara langsung menodongkan senjatanya dengan curiga.",
+            options: [
+                { text: "Saya meminta Elara menurunkan senjata. Saya berasumsi utusan ini memiliki niat baik sampai ia membuktikan sebaliknya.", score: 4, flavorText: "Sosok itu membungkuk sedikit saat Anda memerintahkan Elara mundur, menghargai rasa percaya yang Anda berikan di awal." },
+                { text: "Saya bersedia mendengarkan informasinya terlebih dahulu dan memberinya kesempatan untuk menjelaskan dirinya.", score: 3, flavorText: "Anda menahan pedang Elara, memberi isyarat kepada sang Utusan untuk segera membuktikan ucapannya." },
+                { text: "Saya menjaga jarak dan tetap waspada. Saya hanya akan percaya jika informasinya bisa dibuktikan saat itu juga.", score: 2, flavorText: "Anda tetap mempertahankan posisi defensif, menuntut bukti nyata dari sang Utusan sebelum bernegosiasi." },
+                { text: "Saya menganggapnya sebagai ancaman penipuan. Orang asing di tempat berbahaya pasti memiliki niat buruk.", score: 1, flavorText: "Tatapan tajam Anda membuat Utusan itu mundur selangkah. Anda menolak segala bentuk kompromi yang berisiko." }
+            ]
+        },
+        {
+            type: "N", 
+            text: "Utusan itu pergi setelah memberi peringatan. Saat kalian berbalik, Elara tidak sengaja menginjak pelat tekanan yang memicu alarm purba. Reruntuhan berguncang hebat, dan usaha mengendap-endap Anda hancur berantakan.",
+            options: [
+                { text: "Saya seketika merasa sangat kesal dan marah karena kecerobohan kecilnya menghancurkan seluruh rencana yang sudah saya bangun.", score: 4, flavorText: "Amarah meledak di dada Anda. Kesalahan sepele itu membuat seluruh strategi presisi yang Anda susun runtuh dalam sekejap." },
+                { text: "Saya tidak bisa menyembunyikan kekesalan saya kepadanya dan mengeluhkan mengapa ia tidak berhati-hati.", score: 3, flavorText: "Anda menggerutu tajam sambil menarik Elara menjauh, rasa frustrasi jelas tergambar di wajah Anda." },
+                { text: "Saya merasa sedikit terganggu, namun menahan diri dan langsung fokus mencari jalan keluar.", score: 2, flavorText: "Anda memejamkan mata sesaat untuk meredam kekesalan, lalu segera meneriakkan perintah evakuasi." },
+                { text: "Saya tidak marah sama sekali. Kesalahan bisa terjadi kapan saja, saya segera memberinya instruksi evakuasi dengan tenang.", score: 1, flavorText: "Pikiran Anda tetap dingin bagai es. Anda menarik lengan Elara dan membimbingnya keluar dari reruntuhan yang runtuh." }
+            ]
+        },
+        {
+            type: "C", 
+            text: "Kalian berdua selamat kembali ke markas, namun dengan tangan kosong karena akses utama runtuh. Saat interogasi debriefing di hadapan Kaelen, ia menuntut penjelasan atas kegagalan ekspedisi ini.",
+            options: [
+                { text: "Saya secara terbuka mengakui bahwa keputusan taktis saya kurang optimal sehingga misi gagal, tanpa menyalahkan pihak lain.", score: 4, flavorText: "Kaelen menatap Anda dengan rasa hormat yang baru. Mengakui kekeliruan secara terbuka butuh nyali yang besar." },
+                { text: "Saya mengambil tanggung jawab atas kegagalan tersebut, meskipun Elara juga memiliki andil dalam memicu alarm.", score: 3, flavorText: "Elara menunduk, merasa bersalah sekaligus berterima kasih karena Anda pasang badan sebagai pemimpin." },
+                { text: "Saya menjelaskan fakta kejadiannya secara netral, membiarkan Kaelen menyimpulkan sendiri siapa yang bersalah.", score: 2, flavorText: "Anda memaparkan kronologi dengan presisi tanpa emosi. Fakta berbicara sendiri di atas meja laporan." },
+                { text: "Saya menegaskan bahwa kegagalan ini murni karena kesalahan anak buah saya yang menginjak jebakan, bukan karena strategi saya.", score: 1, flavorText: "Elara menahan napas saat Anda mengalihkan beban kegagalan itu. Kaelen mengangguk pelan, mencatat laporannya." }
+            ]
+        },
+        {
+            type: "Flavor",
+            text: "Malam harinya, setelah laporan yang menegangkan selesai, Anda memutuskan untuk mengunjungi 'The Rusty Gauntlet', sebuah kedai tavern populer di distrik militer, untuk melepaskan kepenatan.",
+            options: [
+                { text: "Saya memesan segelas ale hangat dan mencari tempat duduk.", flavorText: "Cairan hangat itu mengalir di kerongkongan Anda, sedikit menenangkan otot-otot yang tegang setelah seharian di reruntuhan." },
+                { text: "Saya berdiri di dekat perapian sambil mendengarkan musik bard.", flavorText: "Alunan musik lute yang mengalun cepat membawa suasana meriah, kontras dengan kesunyian mencekam di reruntuhan." }
+            ]
+        },
+        {
+            type: "E", 
+            text: "Tavern itu sangat ramai. Berbagai prajurit, pedagang, dan pelancong saling bersulang, tertawa keras, dan berdebat di berbagai meja. Suara dentingan gelas menggema di seluruh penjuru ruangan.",
+            options: [
+                { text: "Saya merasa sangat hidup dan bersemangat. Berada di tengah interaksi banyak orang seperti ini adalah cara terbaik mengisi energi saya.", score: 4, flavorText: "Semangat Anda kembali menyala. Energi kerumunan ini menular dan menghapus segala kelelahan ekspedisi." },
+                { text: "Saya menikmati keramaian ini dan merasa nyaman bergabung dengan beberapa obrolan di meja sekitar.", score: 3, flavorText: "Anda tertawa bersama beberapa prajurit veteran, menikmati keramahan yang ditawarkan malam ini." },
+                { text: "Saya hanya duduk diam menikmati minuman saya. Keramaian ini tidak mengganggu, tapi juga tidak menambah energi saya.", score: 2, flavorText: "Anda menjadi pengamat pasif di tengah keriuhan, menjadikan suara mereka sekadar kebisingan latar belakang." },
+                { text: "Saya merasa energi saya cepat terkuras melihat keramaian ini, dan berharap bisa segera pulang ke tempat yang sepi.", score: 1, flavorText: "Hiruk-pikuk ini justru membuat kepala Anda mulai berdenyut. Anda segera menghabiskan minuman untuk menyingkir dari sana." }
+            ]
+        },
+        {
+            type: "A", 
+            text: "Dari kejauhan, Anda melihat Lyra sang Pengarsip duduk sendirian di sudut yang remang-remang. Ia menatap gelas minumannya dalam diam, bahunya terlihat sedikit merosot.",
+            options: [
+                { text: "Saya dengan sangat mudah menyadari bahwa suasana hatinya sedang buruk, dan insting saya mengatakan ada masalah berat yang membebaninya.", score: 4, flavorText: "Empati Anda langsung bekerja. Gestur kecilnya sudah cukup menceritakan ada badai dalam pikirannya." },
+                { text: "Saya menangkap raut wajahnya yang murung dan menyadari ia sedang tidak baik-baik saja.", score: 3, flavorText: "Anda memicingkan mata, memastikan bahwa kesendiriannya di sudut sana bukan karena ia sedang bersantai." },
+                { text: "Saya melihatnya menunduk, tapi saya tidak terlalu memikirkan apa yang sedang ia rasakan.", score: 2, flavorText: "Anda sekilas melihatnya, lalu kembali memusatkan perhatian pada gelas di tangan Anda sendiri." },
+                { text: "Saya sama sekali tidak menyadari perubahan suasana hatinya atau peduli dengan bahasa tubuhnya.", score: 1, flavorText: "Bagi Anda, ia hanyalah pengunjung kedai biasa. Pikiran Anda terlalu sibuk dengan urusan Anda sendiri." }
+            ]
+        },
+        {
+            type: "A", 
+            text: "Saat Anda memutuskan menghampiri Lyra, beberapa prajurit muda yang mabuk tiba-tiba mencegat Anda untuk meminta nasihat konyol soal taktik. Di saat bersamaan, seorang pelayan terlihat kesulitan membawa nampan besar di dekat Anda.",
+            options: [
+                { text: "Saya menahan pintu untuk pelayan, merespons prajurit dengan candaan, lalu menghampiri Lyra. Saya suka memberikan perhatian pada hampir setiap orang.", score: 4, flavorText: "Kehadiran Anda seperti oasis keramahan. Pelayan itu tersenyum berterima kasih, dan para prajurit pun bubar dengan puas." },
+                { text: "Saya berusaha merespons para prajurit dengan ramah sebelum akhirnya permisi untuk melihat keadaan Lyra.", score: 3, flavorText: "Anda meluangkan waktu sejenak untuk menenangkan mereka secara persuasif sebelum bergerak menuju meja Lyra." },
+                { text: "Saya hanya fokus pada tujuan awal saya menemui Lyra dan mengabaikan para prajurit serta pelayan tersebut.", score: 2, flavorText: "Anda melangkah menyamping, memotong celoteh para prajurit itu dan lurus menuju sudut ruangan tanpa basa-basi." },
+                { text: "Saya mengusir para prajurit itu agar menyingkir dari jalan saya karena mereka hanya membuang waktu saya.", score: 1, flavorText: "Tatapan membunuh Anda dan gestur mengusir dengan kasar seketika membuat nyali para prajurit mabuk itu ciut." }
+            ]
+        },
+        {
+            type: "N", 
+            text: "Anda kembali ke kamar saat tengah malam. Namun, draf perjanjian keamanan untuk Konferensi Puncak besok masih ada beberapa pasal yang belum menemukan titik temu antara faksi-faksi.",
+            options: [
+                { text: "Saya bolak-balik di tempat tidur, sama sekali tidak bisa tidur karena pikiran saya terus dihantui oleh pekerjaan sulit yang belum selesai itu.", score: 4, flavorText: "Bayangan pasal-pasal perjanjian itu terus berputar di kepala Anda. Malam ini sepertinya akan menjadi malam yang sangat panjang." },
+                { text: "Saya merasa gelisah dan membutuhkan waktu berjam-jam untuk bisa memejamkan mata memikirkan draf tersebut.", score: 3, flavorText: "Anda mencoba memaksa diri untuk tidur, namun sesekali terbangun karena memikirkan satu klausa yang belum tuntas." },
+                { text: "Saya sempat memikirkannya sejenak, namun akhirnya bisa mengabaikannya dan tertidur.", score: 2, flavorText: "Anda menghela napas, memutuskan bahwa tubuh yang lelah membutuhkan istirahat lebih dari sekadar kekhawatiran semu." },
+                { text: "Saya langsung tertidur pulas. Pekerjaan yang belum selesai bisa dipikirkan lagi besok pagi.", score: 1, flavorText: "Begitu kepala menyentuh bantal, Anda langsung tenggelam dalam tidur yang lelap tanpa beban." }
+            ]
+        },
+        {
+            type: "N", 
+            text: "Keesokan paginya, Anda terbangun saat hujan turun rintik-rintik. Rencana hari ini sudah sangat jelas dan tidak ada masalah besar yang terjadi pagi ini.",
+            options: [
+                { text: "Saya merasa sangat murung dan hampa tanpa alasan yang benar-benar jelas, membuat saya enggan beranjak dari kasur.", score: 4, flavorText: "Rasa berat yang tidak beralasan menekan dada Anda, membuat setiap persiapan pagi ini terasa seperti memindahkan gunung." },
+                { text: "Saya merasakan awan mendung di hati saya, sedikit merusak mood saya di awal hari ini tanpa sebab spesifik.", score: 3, flavorText: "Suasana hati yang melankolis ini membuat Anda sedikit lebih lambat saat mengenakan seragam Arbiter." },
+                { text: "Saya merasa biasa saja, meskipun cuaca sedikit membuat suasana terasa lambat.", score: 2, flavorText: "Hujan di luar hanyalah cuaca biasa. Anda meminum secangkir teh panas dan bersiap seperti hari-hari lainnya." },
+                { text: "Saya merasa sangat segar dan tidak pernah membiarkan suasana hati saya memburuk tanpa alasan yang rasional.", score: 1, flavorText: "Anda melompat dari tempat tidur dengan penuh vitalitas, siap menaklukkan tantangan diplomasi hari ini." }
+            ]
+        },
+        {
+            type: "N", 
+            text: "Saat sedang memeriksa dokumen, seorang staf tak sengaja menyenggol meja Anda, menumpahkan tinta ke ujung dokumen salinan (bukan draf utama).",
+            options: [
+                { text: "Suasana hati saya langsung berubah drastis dari tenang menjadi sangat marah atau frustrasi hanya karena kejadian kecil tak terduga ini.", score: 4, flavorText: "Tinta yang merembes itu seolah memicu ledakan di kepala Anda. Anda membentak staf tersebut dengan suara keras yang menggema di ruangan." },
+                { text: "Saya merasa cukup kesal dan ngedumel panjang lebar atas kecerobohannya merusak meja saya.", score: 3, flavorText: "Anda terus menggerutu mengenai inkompetensi staf tersebut sambil berusaha mengelap noda yang menyebar." },
+                { text: "Saya sedikit terganggu, namun hanya memintanya segera membersihkan tumpahan tersebut dengan tenang.", score: 2, flavorText: "Anda menghela napas pendek dan menunjuk lap kain di sudut ruangan, enggan memperpanjang masalah." },
+                { text: "Saya tidak merasa terganggu sama sekali. Itu hanya salinan dan bisa diganti, suasana hati saya tetap stabil.", score: 1, flavorText: "Anda hanya menyingkirkan kertas salinan itu tanpa ekspresi, fokus Anda tak sedikit pun goyah dari substansi dokumen." }
+            ]
+        },
+        {
+            type: "E", 
+            text: "Hari ini Konferensi Puncak resmi dimulai. Anda harus mengawasi keamanan gerbang, meredakan perkelahian lisan antar delegasi di lobi, dan memberikan pidato sambutan dalam rentang waktu tiga jam.",
+            options: [
+                { text: "Saya merasa jauh lebih hidup dan bersemangat. Memiliki jadwal yang padat dan banyak kegiatan seperti ini justru membakar energi saya.", score: 4, flavorText: "Langkah Anda semakin cepat dan mantap. Adrenalin dari kesibukan ekstrem ini justru membuat Anda merasa berada di puncak performa." },
+                { text: "Saya menyukai ritme kerja yang sibuk ini dan merasa cukup bertenaga menyelesaikannya satu per satu.", score: 3, flavorText: "Anda mengatur napas dan berpindah dari satu titik ke titik lain dengan senyum profesional yang tak luntur." },
+                { text: "Saya menjalankannya sebagai kewajiban, namun ritme yang padat ini membuat saya merasa cukup lelah.", score: 2, flavorText: "Keringat dingin mulai mengalir. Anda menuntaskan tugas satu demi satu layaknya mesin, menantikan waktu istirahat." },
+                { text: "Saya merasa sangat kewalahan dan stres. Banyaknya kegiatan menguras energi saya hingga titik terendah.", score: 1, flavorText: "Kepala Anda berdenyut hebat. Anda harus menyepi di ruangan kosong selama lima menit hanya untuk bisa bernapas dengan normal." }
+            ]
+        },
+        {
+            type: "C", 
+            text: "Sebelum para delegasi penting masuk ke ruang sidang utama, Anda memberikan arahan terakhir kepada barisan penjaga elit Aethelgard yang Anda pimpin.",
+            options: [
+                { text: "Saya menetapkan target pengamanan yang sempurna, jauh melampaui standar rata-rata markas, menuntut nol toleransi untuk kesalahan.", score: 4, flavorText: "Barisan penjaga itu menelan ludah mendengar standar presisi Anda yang tanpa ampun. Mereka bersumpah tidak akan gagal." },
+                { text: "Saya meminta mereka meningkatkan kewaspadaan sedikit lebih tinggi dari standar operasional normal.", score: 3, flavorText: "Anda menepuk bahu komandan kompi, memastikan mereka mengerti pentingnya acara hari ini bagi kota." },
+                { text: "Saya memberikan arahan agar mereka menjalankan prosedur keamanan persis sesuai dengan standar minimum markas.", score: 2, flavorText: "Standar yang ada sudah dibuat untuk suatu alasan. Anda memerintahkan mereka untuk jalankan semuanya sesuai manual." },
+                { text: "Saya tidak membebani mereka dengan target apa pun; penjagaan santai sudah cukup asalkan tidak ada kekacauan besar.", score: 1, flavorText: "Anda hanya melambaikan tangan, membiarkan mereka menyebar dengan rileks di posisi masing-masing." }
+            ]
+        },
+        {
+            type: "E", 
+            text: "Saat Anda berjalan menyusuri lorong untuk memeriksa pos keamanan terakhir, Anda mendengar dua utusan faksi asing berbisik tentang reputasi Anda sebagai Arbiter baru.",
+            options: [
+                { text: "Mereka pasti mendeskripsikan saya sebagai sosok yang sangat hiperaktif, selalu bergerak tanpa henti mengurus segala hal.", score: 4, flavorText: "Anda tersenyum mendengarnya. Pergerakan konstan Anda jelas telah diakui sebagai kekuatan utama." },
+                { text: "Mereka kemungkinan besar melihat saya sebagai orang yang aktif dan penuh inisiatif dalam bekerja.", score: 3, flavorText: "Anda merasa bangga bahwa dedikasi dan kecepatan Anda merespons krisis diapresiasi oleh pihak luar." },
+                { text: "Mereka mungkin melihat saya sebagai orang yang bekerja dengan ritme sedang dan tidak terburu-buru.", score: 2, flavorText: "Pendapat yang wajar. Anda mengutamakan konsistensi daripada kecepatan yang meledak-ledak." },
+                { text: "Mereka pasti mendeskripsikan saya sebagai sosok yang lamban, santai, dan jarang melakukan banyak pergerakan fisik.", score: 1, flavorText: "Anda tidak peduli walau dianggap lamban. Di Aethelgard, langkah yang terburu-buru justru sering berujung pada jebakan mematikan." }
+            ]
+        },
+        {
+            type: "Flavor",
+            text: "Akhirnya, Ruang Sidang Utama dibuka. Delegasi dari Empat Wilayah duduk mengelilingi meja bundar raksasa. Lord Vane, diplomat ambisius dari faksi Utara, masuk dengan wajah angkuh dan menyilangkan kaki di kursinya.",
+            options: [
+                { text: "Saya berdiri tegak di pusat ruangan, menatap satu per satu seluruh delegasi dengan tenang.", flavorText: "Tatapan diam Anda beresonansi di ruangan itu, membuat kebisingan perlahan mereda menjadi keheningan absolut." },
+                { text: "Saya merapikan jubah saya dan membuka dokumen di podium Arbiter tanpa melihat ke arah mereka.", flavorText: "Suara kertas perkamen yang Anda buka memecah keheningan, menjadi penanda resmi bahwa sidang dimulai." }
+            ]
+        },
+        {
+            type: "E", 
+            text: "Sebagai Arbiter, tugas pertama Anda adalah mencairkan suasana tegang sebelum bahasan inti dimulai. Banyak wajah-wajah petinggi faksi yang sama sekali baru pertama kali Anda temui seumur hidup.",
+            options: [
+                { text: "Saya merasa sangat nyaman dan percaya diri saat harus memulai obrolan dengan para petinggi yang baru saya kenal ini.", score: 4, flavorText: "Anda berjalan santai di antara meja delegasi, menyapa mereka dengan karisma alami yang membuat mereka lengah." },
+                { text: "Saya merasa cukup santai untuk menghampiri mereka dan membuka percakapan basa-basi soal perjalanan mereka.", score: 3, flavorText: "Keramahan Anda berhasil menurunkan ketegangan awal, meski Lord Vane tetap terlihat sinis." },
+                { text: "Saya merasa sedikit canggung, namun memaksakan diri untuk menyapa mereka demi profesionalisme.", score: 2, flavorText: "Anda menyapa mereka dengan formalitas yang kaku, sekadar memenuhi kewajiban diplomatik seorang Arbiter." },
+                { text: "Saya merasa sangat tidak nyaman dan lebih memilih diam menunggu mereka yang menyapa saya lebih dulu.", score: 1, flavorText: "Anda berdiri mematung di belakang podium. Kesunyian pun terbentang canggung di antara Anda dan para utusan." }
+            ]
+        },
+        {
+            type: "E", 
+            text: "Sidang resmi dimulai. Ada keheningan panjang di mana semua faksi menunggu siapa yang akan melempar isu pertama terkait sengketa wilayah Reruntuhan Bawah.",
+            options: [
+                { text: "Saya sama sekali tidak ragu untuk mengambil inisiatif berbicara terlebih dahulu dan memimpin jalannya pertemuan.", score: 4, flavorText: "Suara Anda membelah kesunyian dengan lantang, mengambil alih kendali forum secara instan dan tanpa keraguan." },
+                { text: "Saya memecah keheningan tersebut dengan mengajukan topik diskusi pertama ke tengah forum.", score: 3, flavorText: "Anda mengetuk meja dengan ringan dan langsung membuka lembaran isu perbatasan, memulai perdebatan." },
+                { text: "Saya menunggu beberapa saat; jika tidak ada yang bicara barulah saya akan membuka suara.", score: 2, flavorText: "Anda membiarkan ketegangan terbangun beberapa detik untuk melihat siapa yang akan goyah lebih dulu." },
+                { text: "Saya memilih diam dan menunggu sampai ada delegasi lain yang berinisiatif memulai pembicaraan.", score: 1, flavorText: "Anda bersidekap dan menunggu. Pada akhirnya, Lord Vane yang tak sabar membuka suara dengan arogan." }
+            ]
+        },
+        {
+            type: "A", 
+            text: "Seperti dugaan, Lord Vane berdiri dan mulai mengkritik kebijakan keamanan Aethelgard dengan nada yang sangat merendahkan dan menggunakan argumen sejarah yang jelas-jelas keliru.",
+            options: [
+                { text: "Meskipun argumennya keliru, saya dengan sabar memberi kesempatan penuh kepadanya untuk menyampaikan seluruh pendapatnya sampai selesai sebelum menanggapi.", score: 4, flavorText: "Anda mendengarkan dengan tangan bertaut. Memberinya panggung justru memperlihatkan cacat logikanya kepada delegasi lain." },
+                { text: "Saya membiarkannya bicara sebagian besar, lalu menyela dengan halus untuk meluruskan fakta sejarah.", score: 3, flavorText: "Anda mengangguk perlahan sebelum meluruskan ucapannya tanpa menyinggung egonya terlalu jauh." },
+                { text: "Saya sering menyela di tengah kalimatnya karena ketidakakuratan argumennya mengganggu jalannya sidang.", score: 2, flavorText: "Lord Vane terlihat jengkel karena Anda mematahkan argumennya tepat sebelum ia mencapai klimaks kalimatnya." },
+                { text: "Saya langsung memotong pembicaraannya secara kasar sejak awal karena ia jelas-jelas tidak menghargai forum.", score: 1, flavorText: "Suara Anda menghantam kalimatnya dengan keras. Lord Vane terdiam kaget, menatap Anda dengan kebencian terbuka." }
+            ]
+        },
+        {
+            type: "A", 
+            text: "Perbedaan pendapat memuncak. Lord Vane menggebrak meja dan menuduh faksi Anda sengaja menyembunyikan kristal sihir kuno. Delegasi lain mulai berbisik panik.",
+            options: [
+                { text: "Sangat mudah bagi saya untuk tetap menjaga nada dan cara berbicara yang tenang, tidak terpancing emosi meskipun dihadapkan pada tuduhan kasar.", score: 4, flavorText: "Ketenangan absolut Anda bagaikan air es yang mengguyur bara amarahnya, membuat Vane terlihat bodoh karena berteriak sendirian." },
+                { text: "Saya berusaha menahan diri dan menjawab argumennya dengan bahasa formal yang mendinginkan suasana.", score: 3, flavorText: "Anda menarik napas dalam, memformulasikan bantahan logis tanpa menggunakan nada tinggi." },
+                { text: "Nada bicara saya mulai meninggi dan sedikit sarkastis untuk membalas provokasinya.", score: 2, flavorText: "Anda membalas tatapan tajamnya dengan senyum meremehkan dan kalimat yang menusuk egonya." },
+                { text: "Saya membalas dengan gebrakan meja yang sama kerasnya dan menggunakan kata-kata kasar untuk membungkamnya.", score: 1, flavorText: "Gebrakan meja Anda menggema lebih keras! Perang mulut pecah, dan ketegangan di ruang sidang memuncak hingga titik didih." }
+            ]
+        },
+        {
+            type: "O", 
+            text: "Sidang menemui jalan buntu (deadlock). Aturan lama sudah usang. Sebagai Arbiter, Anda ditantang merumuskan satu pasal kesepakatan baru dari nol, saat itu juga, tanpa panduan preseden hukum apa pun.",
+            options: [
+                { text: "Saya sangat menikmati tugas ini. Merancang sebuah ide solusi dari nol tanpa panduan apa pun adalah tantangan yang memacu kreativitas saya.", score: 4, flavorText: "Pena Anda meluncur lancar di atas perkamen. Tidak adanya aturan lama justru memberi Anda kebebasan untuk menciptakan harmoni baru." },
+                { text: "Saya merasa tertantang dan mencoba menggabungkan beberapa ide baru untuk membuat draf pasal tersebut.", score: 3, flavorText: "Anda mengombinasikan usulan dari tiga faksi berbeda, meraciknya menjadi satu klausa yang masuk akal." },
+                { text: "Saya merasa kesulitan merancang tanpa referensi, namun mencoba menyelesaikannya seadanya.", score: 2, flavorText: "Kening Anda berkerut. Anda menyalin format perjanjian lama dan hanya mengubah beberapa kata kunci agar terlihat baru." },
+                { text: "Saya menolak dan merasa frustrasi. Saya tidak bisa bekerja merancang sesuatu jika tidak ada panduan atau format yang jelas.", score: 1, flavorText: "Anda membanting pena. Menuntut sebuah konsensus hukum tanpa draf acuan adalah sesuatu yang tidak masuk akal bagi Anda." }
+            ]
+        },
+        {
+            type: "A", 
+            text: "Di tengah penulisan draf, laporan masuk dari luar: ada keributan di gerbang utama akibat provokator faksi Utara. Anda harus mendelegasikan penyelesaian ini kepada Elara, prajurit yang kemarin melakukan kesalahan.",
+            options: [
+                { text: "Saya menyerahkan tugas pengamanan gerbang itu sepenuhnya kepada Elara tanpa merasa cemas sedikit pun akan kemampuannya.", score: 4, flavorText: "Kepercayaan mutlak Anda membakar semangat Elara. Ia bergegas pergi dengan tekad baja untuk menebus kesalahannya kemarin." },
+                { text: "Saya mendelegasikan tugas itu kepadanya dan yakin ia bisa menanganinya, dengan sedikit instruksi tambahan.", score: 3, flavorText: "Anda memberikan instruksi singkat dan menepuk pundaknya. Elara mengangguk mengerti dan berlari ke posnya." },
+                { text: "Saya menugaskannya, tapi diam-diam merasa cemas dan meminta penjaga lain untuk terus mengawasinya.", score: 2, flavorText: "Anda tidak bisa membuang kekhawatiran itu. Setiap lima menit, mata Anda melirik ke arah pintu ruang sidang, menanti kabar." },
+                { text: "Saya tidak memercayainya. Saya menolak mendelegasikannya dan memilih mengurus keributan itu sendiri meskipun sidang tertunda.", score: 1, flavorText: "Anda meninggalkan sidang yang penting ini. Jika Anda ingin keributan di gerbang selesai dengan benar, Anda harus turun tangan sendiri." }
+            ]
+        },
+        {
+            type: "C", 
+            text: "Draf itu ternyata sangat menguras otak. Malam semakin larut, huruf-huruf di perkamen mulai terasa mengabur, dan kepala Anda berdenyut karena kelelahan kronis setelah seharian bertarung argumen.",
+            options: [
+                { text: "Saya memilih untuk terus memaksakan diri menuntaskan draf sulit ini malam ini juga, meskipun membutuhkan sisa energi ekstra yang ada.", score: 4, flavorText: "Anda menyeka keringat dingin dan memaksa mata Anda tetap terbuka. Hanya tekad murni yang menggerakkan pena Anda saat ini." },
+                { text: "Saya bertekad menyelesaikannya malam ini dengan beristirahat sejenak setiap beberapa paragraf.", score: 3, flavorText: "Anda meminum air dingin dan meregangkan leher, membagi fokus Anda secara bertahap agar tidak tumbang." },
+                { text: "Saya mengerjakan semampu saya, jika sudah terlalu lelah saya akan membiarkan sisanya diurus staf dokumentasi esok hari.", score: 2, flavorText: "Anda menyelesaikan poin utama dan memberikan coretan instruksi sisanya untuk diketik ulang oleh Lyra besok pagi." },
+                { text: "Saya langsung menyerah. Tugas ini terlalu sulit untuk kondisi saya saat ini, saya menutup dokumen itu dan menunda sidang besok.", score: 1, flavorText: "Tubuh manusia punya batasnya. Anda menggeletakkan kepala di atas meja, tertidur pulas dalam hitungan detik." }
+            ]
+        },
+        {
+            type: "C", 
+            text: "Matahari perlahan terbit. Batas waktu penyerahan draf final ke tangan Kaelen dan utusan faksi adalah fajar menyingsing, tepat saat lonceng kota berdentang.",
+            options: [
+                { text: "Saya memastikan seluruh dokumen draf tersebut selesai tepat waktu dengan kualitas maksimal, seperti komitmen yang selalu saya pegang.", score: 4, flavorText: "Lonceng berdentang saat Anda menyegel dokumen itu dengan lilin emas. Kualitas dan ketepatan waktu Anda tidak tercela." },
+                { text: "Saya berhasil menyelesaikan tugas tersebut tepat sebelum fajar menyingsing.", score: 3, flavorText: "Tepat saat cahaya matahari menyentuh ambang jendela, draf itu selesai dan siap didistribusikan." },
+                { text: "Saya terlambat beberapa saat karena kelelahan, dan meminta sedikit perpanjangan waktu sidang.", score: 2, flavorText: "Para utusan harus menunggu beberapa jam tambahan sambil bergumam pelan sebelum Anda akhirnya menyerahkan gulungan tersebut." },
+                { text: "Saya sama sekali gagal memenuhi tenggat waktu tersebut karena manajemen waktu yang buruk malam itu.", score: 1, flavorText: "Sidang hari kedua dimulai tanpa landasan draf yang utuh, memicu gelombang kekacauan kecil yang harus Anda hadapi lagi." }
+            ]
+        },
+        {
+            type: "Flavor",
+            text: "Terlepas dari segala rintangan, draf disetujui. Lord Vane mendengus namun menandatangani pakta perdamaian baru. Kota Aethelgard aman dari perang saudara, setidaknya untuk saat ini.",
+            options: [
+                { text: "Saya melipat dokumen asli tersebut dan menyimpannya ke dalam arsip markas yang tebal.", flavorText: "Sebuah sejarah baru Aethelgard telah didokumentasikan di bawah bayang-bayang nama Anda." },
+                { text: "Saya berdiri tegak, menatap ke luar jendela besar melihat matahari pagi menyinari atap-atap batu kota.", flavorText: "Cahaya pagi yang hangat membawa sedikit kelegaan. Ini adalah awal dari tugas panjang Anda sebagai Arbiter." }
+            ]
+        },
+        {
+            type: "O", 
+            text: "Setelah sidang bubar dan ruangan kosong, Anda menemukan sebuah buku tebal tertinggal di kursi Lord Vane. Judulnya adalah 'Kosmologi Faksi Utara', sebuah topik yang sama sekali tidak ada hubungannya dengan yurisdiksi Anda.",
+            options: [
+                { text: "Saya segera membawa buku itu dan meluangkan waktu luang saya untuk mengeksplorasi pengetahuan baru tersebut dengan penuh antusias.", score: 4, flavorText: "Membaca kosmologi asing itu terasa seperti membuka pintu menuju dunia lain. Anda tidak bisa berhenti membalik halamannya." },
+                { text: "Saya membuka-buka halamannya karena tertarik mengetahui sedikit budaya mereka di luar urusan diplomasi hari ini.", score: 3, flavorText: "Anda membaca beberapa bab tentang mitologi mereka, sekadar untuk menambah referensi budaya." },
+                { text: "Saya hanya membalik beberapa halaman depan lalu menyimpannya, tidak terlalu tertarik mempelajari hal di luar bidang saya.", score: 2, flavorText: "Anda melirik isinya sebentar, menguap, lalu memasukkan buku itu ke dalam rak tanpa niat membacanya lagi." },
+                { text: "Saya memanggil pelayan untuk segera mengembalikan buku itu. Membaca hal di luar tanggung jawab kerja saya adalah buang-buang waktu.", score: 1, flavorText: "Buku itu bahkan tidak terbuka. Anda memberikan buku tersebut kepada pelayan dan segera beralih ke tugas logistik Anda." }
+            ]
+        },
+        {
+            type: "N", 
+            text: "Di penghujung hari, Anda berdiri sendiri di balkon menara tertinggi, menatap Aethelgard yang damai. Namun, misteri kristal di Reruntuhan Bawah dan senyum licik Vane masih membekas jelas di ingatan Anda.",
+            options: [
+                { text: "Saya merasa sangat cemas dan pikiran saya dipenuhi oleh skenario kemungkinan buruk yang mungkin menghancurkan kedamaian ini kelak.", score: 4, flavorText: "Udara dingin malam seolah menusuk tulang. Anda mengepalkan tangan, menyadari bahwa kedamaian ini mungkin hanya ilusi rapuh menjelang badai sesungguhnya." },
+                { text: "Saya sering merasa khawatir bahwa kesepakatan hari ini hanyalah bom waktu yang akan meledak suatu saat nanti.", score: 3, flavorText: "Anda menghela napas panjang. Pekerjaan Anda mungkin baru saja menunda bencana, bukan menyelesaikannya." },
+                { text: "Terkadang terlintas rasa khawatir, namun saya berusaha meyakinkan diri bahwa semuanya akan baik-baik saja.", score: 2, flavorText: "Anda menepis bayangan gelap itu dari pikiran Anda, memilih untuk memfokuskan pandangan pada lampu-lampu kota yang hangat." },
+                { text: "Saya menatap masa depan dengan pikiran yang sangat tenang; kekhawatiran soal hal yang belum terjadi tidak pernah mengganggu ketenangan batin saya.", score: 1, flavorText: "Malam itu hening dan tenang, sama seperti pikiran Anda. Tugas hari ini selesai, dan Anda siap menghadapi apa pun yang dibawa esok hari." }
+            ]
+        }
+    ];
+
+    function startGame() {
+        const nameInput = document.getElementById('player-name').value.trim();
+        if (nameInput === "") {
+            alert("Silakan masukkan nama Anda terlebih dahulu.");
+            return;
+        }
+        playerName = nameInput;
+        
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+        
+        renderNode();
+    }
+
+    function renderNode() {
+        if (currentStep >= storyNodes.length) {
+            endGame();
+            return;
+        }
+
+        const node = storyNodes[currentStep];
+        const storyTextEl = document.getElementById('story-text');
+        const optionsContainer = document.getElementById('options');
+        const toastEl = document.getElementById('flavor-toast');
+
+        if (nextFlavorText) {
+            toastEl.innerText = nextFlavorText;
+            toastEl.style.display = 'block';
+            nextFlavorText = ""; 
+        } else {
+            toastEl.style.display = 'none';
+        }
+
+        storyTextEl.style.opacity = 0;
+        setTimeout(() => {
+            let txt = node.text.replace(/Anda/g, playerName !== "" ? `Anda (${playerName})` : "Anda");
+            if(node.text.includes("Anda")) {
+                storyTextEl.innerText = node.text;
+            } else {
+                storyTextEl.innerText = node.text;
+            }
+            
+            storyTextEl.style.opacity = 1;
+        }, 150);
+
+        optionsContainer.innerHTML = '';
+
+        node.options.forEach((opt) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => handleChoice(node, opt);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function handleChoice(node, option) {
+        if (node.type !== "Flavor" && option.score) {
+            scores[node.type] += option.score;
+        }
+
+        if (option.flavorText) {
+            nextFlavorText = option.flavorText;
+        }
+
+        currentStep++;
+        renderNode();
+    }
+
+    function endGame() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('end-name').innerText = playerName;
+
+        const scoreDetails = document.getElementById('score-details');
+        
+        const dimNames = {
+            E: "Extraversion",
+            A: "Agreeableness",
+            C: "Conscientiousness",
+            N: "Negative Emotionality",
+            O: "Open-Mindedness"
+        };
+
+        let htmlContent = '';
+        for (let dim in dimNames) {
+            htmlContent += `
+                <div class="score-row">
+                    <strong>${dimNames[dim]}</strong>
+                    <span>${scores[dim]} / 24</span>
+                </div>
+            `;
+        }
+        scoreDetails.innerHTML = htmlContent;
+    }
+
+    function resetGame() {
+        currentStep = 0;
+        scores = { E: 0, A: 0, C: 0, N: 0, O: 0 };
+        nextFlavorText = "";
+        
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('start-screen').style.display = 'block';
+        document.getElementById('player-name').value = '';
+        playerName = '';
+    }
+</script>
+</body>
+</html>
