@@ -99,7 +99,7 @@
         .btn-center {
             text-align: center;
             display: block;
-            margin: 0 auto;
+            margin: 30px auto 0 auto;
             width: 100%;
             max-width: 250px;
             font-weight: bold;
@@ -122,9 +122,15 @@
             border-radius: 5px;
         }
 
-        #start-screen, #result-screen, #feedback-screen {
+        #start-screen, #result-screen {
             text-align: center;
             animation: fadeIn 0.4s ease-in-out;
+        }
+
+        #feedback-screen {
+            animation: fadeIn 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
         }
 
         #start-screen p, #result-screen p {
@@ -132,12 +138,12 @@
             margin-bottom: 30px;
         }
 
+        /* Disesuaikan agar sama persis dengan #story-text */
         #feedback-text {
-            font-size: 1.3em;
-            font-style: italic;
-            color: #d4af37;
-            margin-bottom: 40px;
-            line-height: 1.8;
+            font-size: 1.1em;
+            color: var(--text-color);
+            white-space: pre-line;
+            line-height: 1.6;
         }
 
         #start-btn, #restart-btn {
@@ -644,7 +650,7 @@
         feedbackScreen.offsetHeight;
         feedbackScreen.style.animation = null;
         
-        feedbackScreen.style.display = 'block';
+        feedbackScreen.style.display = 'flex';
     }
 
     function continueStory() {
