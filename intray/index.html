@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>In-Tray Prioritization Assessment</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --ink:#28303d;--muted:#707983;--paper:#fffdf8;--line:#dfe3e6;
+  --desk-bg:#f4f5f7; 
+  --danger:#cc7373; 
+  --warning:#a66a00;--success:#327047;
+}
+body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#eef0f2;color:var(--ink);overflow-x:hidden}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.55}
+
+/* ---------- LOGIN ---------- */
+.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:30px}
+.screen.active{display:flex}
+.card{width:min(760px,94vw);background:#fff;border-radius:18px;padding:42px;box-shadow:0 18px 50px rgba(0,0,0,.11)}
+h1,h2,h3{margin-top:0}
+.muted{color:var(--muted);line-height:1.6}
+.field{display:block;margin:22px 0}
+.field span{display:block;font-size:13px;font-weight:800;margin-bottom:8px}
+input,textarea{width:100%;border:1px solid #cbd1d6;border-radius:10px;padding:12px 14px;outline:none}
+input:focus,textarea:focus{border-color:#5d6873}
+textarea{min-height:220px;resize:vertical}
+.primary,.secondary{border-radius:10px;padding:12px 20px;font-weight:800}
+.primary{border:0;background:var(--ink);color:white}
+.secondary{border:1px solid #cbd1d6;background:white;color:var(--ink)}
+.error{color:#a52a2a;min-height:20px;font-size:14px}
+
+/* ---------- APP ---------- */
+#assessment{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding: 32px;}
+#assessment.active{display:flex}
+
+#window {
+  width: min(1100px, 94vw);
+  background: var(--desk-bg);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.15), 0 0 0 1px rgba(0,0,0,0.05);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Bingkai atas ala MacOS */
+.window-frame {
+  height: 38px;
+  background: #f0f1f3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #dcdfe4;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.control-red, .control-yellow, .control-green {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.control-red { background: #ff5f56; }
+.control-yellow { background: #ffbd2e; }
+.control-green { background: #27c93f; }
+
+.window-frame-icon {
+  color: #a0a5ab;
+  font-size: 14px;
+}
+
+/* Header Gelap */
+.topbar{
+  height: 60px;
+  background: var(--ink);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.window-title {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.topright{display:flex;align-items:center;gap: 28px;}
+.topright-text { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #a4abb5;}
+.timer{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;min-width:60px;text-align:right}
+.timer.warning{color:#ffbd2e}
+
+/* ---------- DESK ---------- */
+#deskView.main {
+  width: 100%;
+  margin: 0;
+}
+
+.desk {
+  background: var(--desk-bg);
+  padding: 50px 60px 80px;
+  min-height: 550px;
+}
+
+.desk-content-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.desk-content-header h1 {
+  font-size: 34px;
+  margin-bottom: 12px;
+  color: #1a1d21;
+}
+
+.desk-content-header .subtitle {
+  color: #4a515a;
+  font-size: 15px;
+  max-width: 600px;
+  margin: 0 auto 35px;
+  line-height: 1.6;
+}
+
+.desk-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #5c6673;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+}
+
+.channelgrid{display:grid;grid-template-columns:repeat(3,1fr);gap: 30px; max-width: 900px; margin: 0 auto;}
+.channel {
+  position: relative;
+  border: 0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 35px 25px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+  transition: transform .2s ease, box-shadow .2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.channel:hover{transform:translateY(-6px);box-shadow: 0 16px 32px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);}
+
+.channel .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  height: 64px;
+  width: 64px;
+}
+
+.channel h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #1a1d21;
+}
+
+.count {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.badge {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: none;
+}
+
+.badge.show {
+  display: block;
+}
+
+/* ---------- INBOX ---------- */
+.panel{background:white;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.06); border: 1px solid #e7eaec;}
+.panelhead{
+  padding:20px 26px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom: 10px;
+}
+.item{
+  width:100%;border:0;border-bottom:1px solid #f0f2f4;background:white;
+  padding:22px 28px;text-align:left;display:grid;
+  grid-template-columns:12px 1fr auto;gap:18px;align-items:center;
+  transition: background 0.15s;
+}
+.item:hover{background:#f9fafb}
+.item:last-child{border-bottom:0}
+.dot{width:10px;height:10px;border-radius:50%;background:#cc7373}
+.dot.read{background:#b0b6bc}
+.dot.responded{background:var(--success)}
+.itemtitle{font-weight:800;margin-bottom:6px; font-size: 15px; color: #1a1d21;}
+.preview{font-size:14px;color:var(--muted)}
+.time{font-size:13px;color:var(--muted); font-weight: 500;}
+.state{font-size:10px;font-weight:800;letter-spacing:.05em;margin-top:8px}
+.state.unread{color:#cc7373}
+.state.read{color:#8b9299}
+.state.responded{color:var(--success)}
+
+/* ---------- DETAIL ---------- */
+.paper{
+  background:#ffffff;padding:50px 60px;border-radius:12px;
+  box-shadow:0 12px 35px rgba(0,0,0,.08);
+  border: 1px solid #e7eaec;
+}
+.meta{color:var(--muted);font-size:13px;line-height:1.8;border-bottom:1px solid #e7eaec;padding-bottom:20px;margin-bottom:30px}
+.paper p{line-height:1.75; color: #3a4149;}
+.statusbox{margin:30px 0;padding:16px 20px;border-radius:10px;background:#f8f9fa;font-size:14px; border: 1px solid #e7eaec;}
+.statusbox strong{display:block;margin-bottom:6px; color: #1a1d21;}
+.actionbar{display:flex;justify-content:space-between;gap:12px;margin-top:40px}
+
+/* ---------- MESSAGE DETAIL ---------- */
+.chat{
+  background:#f4f5f7;border-radius:12px;padding:25px;
+  max-height:430px;overflow:auto;
+  border: 1px solid #e7eaec;
+}
+.bubble{max-width:75%;padding:14px 18px;border-radius:14px;margin:12px 0;line-height:1.5; font-size: 14px;}
+.bubble.them{background:white;margin-right:auto; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+.bubble.you{background:#e2eedf;margin-left:auto; color: #214018;}
+.bubble small{display:block;color:#88929c;font-size:11px;margin-top:6px}
+
+/* ---------- RESPONSE ---------- */
+.response-card{width:100%; border: 1px solid #e7eaec;}
+
+/* ---------- END ---------- */
+.ended{text-align:center}
+.ended .big{font-size:64px;margin-bottom:10px}
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translateX(-50%);
+  background:#1a1d21;color:white;padding:14px 22px;border-radius:10px;
+  display:none;z-index:100; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  font-size: 14px; font-weight: 500;
+}
+
+@media(max-width:800px){
+  .channelgrid{grid-template-columns:1fr}
+  .desk{padding:40px 20px}
+  .paper{padding:30px 20px}
+  .card{padding:30px 20px}
+  .item{grid-template-columns:10px 1fr}
+  .time{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginScreen" class="screen active">
+  <div class="card">
+    <h1>IN-TRAY ASSESSMENT</h1>
+    <p class="muted">
+      This simulation assesses how you review incoming information,
+      determine priorities, and decide what requires action.
+    </p>
+
+    <label class="field">
+      <span>CANDIDATE ID</span>
+      <input id="candidateId" autocomplete="off" placeholder="e.g. CAND-001">
+    </label>
+
+    <label class="field">
+      <span>ACCESS TOKEN</span>
+      <input id="token" autocomplete="off" placeholder="Enter your access token">
+    </label>
+
+    <div id="loginError" class="error"></div>
+    <button id="startBtn" class="primary" style="margin-top:10px;">START ASSESSMENT</button>
+
+    <p class="muted" style="font-size:12px;margin-top:25px">
+      Prototype token: <strong>INTRAY-2026</strong>
+    </p>
+  </div>
+</section>
+
+<section id="assessment">
+  <div id="window">
+    <div class="window-frame">
+      <div class="window-controls">
+        <div class="control-red"></div>
+        <div class="control-yellow"></div>
+        <div class="control-green"></div>
+      </div>
+      <div class="window-frame-icon">⤢</div>
+    </div>
+    
+    <header class="topbar">
+      <div class="window-title">Your Desk</div>
+      <div class="topright">
+        <span id="candidateDisplay" class="topright-text"></span>
+        <div style="display:flex; align-items:center; gap: 8px;">
+          <span id="timer" class="timer">45:00</span>
+          <span style="font-size: 14px; color: #a4abb5;">⏱</span>
+        </div>
+      </div>
+    </header>
+
+    <main id="deskView" class="main">
+      <div class="desk">
+        <div class="desk-content-header">
+          <h1>Your Desk</h1>
+          <p class="subtitle">
+            Information has arrived through different channels. Review and prioritize what requires your attention.
+          </p>
+          <div class="desk-label">INCOMING INFORMATION</div>
+        </div>
+
+        <div class="channelgrid">
+          <button class="channel" data-channel="email">
+            <span id="emailBadge" class="badge"></span>
+            <div class="icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 20C12 17.7909 13.7909 16 16 16H48C50.2091 16 52 17.7909 52 20V44C52 46.2091 50.2091 48 48 48H16C13.7909 48 12 46.2091 12 44V20Z" fill="#A7B7E6"/>
+                  <path d="M12 24L32 38L52 24" stroke="#879BD6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="32" cy="28" r="9" fill="white"/>
+                  <text x="32" y="32" font-family="Arial" font-size="12" font-weight="bold" fill="#314B9A" text-anchor="middle">@</text>
+              </svg>
+            </div>
+            <h2>Email</h2>
+            <div id="emailCount" class="count"></div>
+          </button>
+
+          <button class="channel" data-channel="memo">
+            <span id="memoBadge" class="badge"></span>
+            <div class="icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 10H38L50 22V52C50 54.2091 48.2091 56 46 56H18C15.7909 56 14 54.2091 14 52V14C14 11.7909 15.7909 10 18 10Z" fill="#F4D67B"/>
+                  <path d="M38 10V22H50" fill="#E0BC50"/>
+                  <rect x="22" y="32" width="20" height="3" rx="1.5" fill="#C99F2A"/>
+                  <rect x="22" y="40" width="12" height="3" rx="1.5" fill="#C99F2A"/>
+              </svg>
+            </div>
+            <h2>Memos</h2>
+            <div id="memoCount" class="count"></div>
+          </button>
+
+          <button class="channel" data-channel="message">
+            <span id="messageBadge" class="badge"></span>
+            <div class="icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="14" y="20" width="26" height="18" rx="5" fill="#7FD5A4"/>
+                  <path d="M14 34V42L22 37" fill="#7FD5A4"/>
+                  <rect x="24" y="28" width="26" height="18" rx="5" fill="#5EBC88"/>
+                  <path d="M50 42V50L42 45" fill="#5EBC88"/>
+              </svg>
+            </div>
+            <h2>Messages</h2>
+            <div id="messageCount" class="count"></div>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <main id="inboxView" class="main" style="display:none; padding: 30px;">
+      <div class="panelhead">
+        <div>
+          <h1 id="inboxTitle" style="margin-bottom: 5px; font-size: 24px;"></h1>
+          <div id="inboxSubtitle" class="subtitle" style="font-size: 14px;"></div>
+        </div>
+        <button id="backDeskFromInbox" class="secondary">← DESK</button>
+      </div>
+      <div id="itemList" class="panel"></div>
+    </main>
+
+    <main id="detailView" class="main" style="display:none; padding: 30px;">
+      <div class="paper">
+        <div id="detailMeta" class="meta"></div>
+        <h1 id="detailTitle" style="font-size: 26px; margin-bottom: 20px;"></h1>
+        <div id="detailBody"></div>
+        <div id="detailState" class="statusbox"></div>
+
+        <div class="actionbar">
+          <button id="backInboxBtn" class="secondary">← BACK TO INBOX</button>
+          <button id="actionBtn" class="primary"></button>
+        </div>
+      </div>
+    </main>
+
+    <main id="responseView" class="main" style="display:none; padding: 30px;">
+      <div class="card response-card">
+        <h1 id="responseTitle" style="font-size: 24px; margin-bottom: 10px;"></h1>
+        <p class="muted" style="margin-bottom: 25px;">
+          Record what you would do. Explain your priority, immediate action,
+          and any follow-up you consider necessary.
+        </p>
+
+        <textarea id="responseText" placeholder="Type your response here..."></textarea>
+
+        <div class="actionbar">
+          <button id="cancelResponse" class="secondary">← BACK</button>
+          <button id="submitResponse" class="primary">SUBMIT RESPONSE</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section id="endedScreen" class="screen">
+  <div class="card ended">
+    <div class="big">⏱</div>
+    <h1>TIME'S UP</h1>
+    <p class="muted">
+      The In-Tray assessment has ended. Further interaction is disabled.
+    </p>
+    <p id="endedCandidate" class="muted"></p>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/*
+============================================================
+IN-TRAY PRIORITIZATION PROTOTYPE
+============================================================
+*/
+
+const CONFIG = {
+  durationSeconds: 45 * 60,
+  accessToken: "INTRAY-2026"
+};
+
+const inbox = {
+  email: [
+    {
+      id:"email-01",
+      from:"Sarah — Major Client",
+      subject:"URGENT: Customer complaint",
+      time:"08:12",
+      status:"unread",
+      preview:"Several items were missing from yesterday's delivery.",
+      body:`
+        <p>A major customer has reported that several items were
+        missing from yesterday's delivery.</p>
+        <p>The customer is waiting for an explanation and has
+        indicated that the issue may affect their next order.</p>
+        <p>You are responsible for deciding what should happen next.</p>
+      `
+    },
+    {
+      id:"email-02",
+      from:"David — Operations",
+      subject:"Staffing concern",
+      time:"08:35",
+      status:"unread",
+      preview:"There may be insufficient staffing coverage next week.",
+      body:`
+        <p>David has flagged a staffing gap for next week.</p>
+        <p>If no adjustment is made, one service area may operate
+        below the expected level.</p>
+        <p>Consider whether this requires immediate action or
+        further information.</p>
+      `
+    },
+    {
+      id:"email-03",
+      from:"Finance",
+      subject:"Monthly performance report",
+      time:"09:02",
+      status:"unread",
+      preview:"February figures are now available for review.",
+      body:`
+        <p>The monthly performance report is available.</p>
+        <p>One indicator has deteriorated compared with the previous
+        month, although there is no immediate operational impact reported.</p>
+      `
+    },
+    {
+      id:"email-04",
+      from:"Internal Communications",
+      subject:"Team social event",
+      time:"09:15",
+      status:"unread",
+      preview:"Reminder about the team event next Friday.",
+      body:`
+        <p>This is a reminder about the team social event next Friday.</p>
+        <p>Please confirm attendance when convenient.</p>
+      `
+    }
+  ],
+  memo: [
+    {
+      id:"memo-01",
+      from:"HR Department",
+      subject:"Policy update",
+      time:"08:20",
+      status:"unread",
+      preview:"A revised internal procedure will come into effect next month.",
+      body:`
+        <p>HR has circulated a revised internal procedure that will
+        come into effect next month.</p>
+        <p>No immediate action is required, but managers should be
+        aware of the change.</p>
+      `
+    },
+    {
+      id:"memo-02",
+      from:"Facilities",
+      subject:"Office maintenance",
+      time:"08:50",
+      status:"unread",
+      preview:"Planned maintenance will affect part of the office tomorrow.",
+      body:`
+        <p>Facilities has advised that maintenance will affect part
+        of the office tomorrow morning.</p>
+        <p>The disruption is expected to be manageable, but teams
+        should be informed.</p>
+      `
+    }
+  ],
+  message: [
+    {
+      id:"message-01",
+      from:"John Smith",
+      subject:"Can you call me urgently?",
+      time:"08:41",
+      status:"unread",
+      preview:"John has asked for an urgent call regarding a client issue.",
+      body:`
+        <div class="chat">
+          <div class="bubble them">
+            Can you call me urgently?
+            <small>John Smith · 08:41</small>
+          </div>
+          <div class="bubble you">
+            What's the issue?
+            <small>You · 08:43</small>
+          </div>
+          <div class="bubble them">
+            It's regarding the client delivery. We may need to act before noon.
+            <small>John Smith · 08:44</small>
+          </div>
+        </div>
+      `
+    },
+    {
+      id:"message-02",
+      from:"Operations Team",
+      subject:"Possible service disruption",
+      time:"08:53",
+      status:"unread",
+      preview:"A possible service disruption has been reported.",
+      body:`
+        <div class="chat">
+          <div class="bubble them">
+            We have a possible service disruption affecting one customer account.
+            <small>Operations Team · 08:53</small>
+          </div>
+          <div class="bubble them">
+            More information is being checked.
+            <small>Operations Team · 08:55</small>
+          </div>
+        </div>
+      `
+    },
+    {
+      id:"message-03",
+      from:"Anna",
+      subject:"Tomorrow's meeting",
+      time:"09:10",
+      status:"unread",
+      preview:"Confirmation of tomorrow's meeting time.",
+      body:`
+        <div class="chat">
+          <div class="bubble them">
+            Just confirming tomorrow's meeting at 10:00.
+            <small>Anna · 09:10</small>
+          </div>
+        </div>
+      `
+    },
+    {
+      id:"message-04",
+      from:"IT Helpdesk",
+      subject:"Password reminder",
+      time:"09:18",
+      status:"unread",
+      preview:"Routine reminder to update your password.",
+      body:`
+        <div class="chat">
+          <div class="bubble them">
+            This is a routine reminder to update your password according to company policy.
+            <small>IT Helpdesk · 09:18</small>
+          </div>
+        </div>
+      `
+    }
+  ]
+};
+
+let state = {
+  candidateId:"",
+  currentChannel:null,
+  currentItem:null,
+  remaining:CONFIG.durationSeconds,
+  timerId:null,
+  ended:false,
+  startedAt:null
+};
+
+const $ = id => document.getElementById(id);
+
+const channelNames = {
+  email:"Email Inbox",
+  memo:"Memo Tray",
+  message:"Messages"
+};
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+function showAssessmentView(view){
+  ["desk","inbox","detail","response"].forEach(v=>{
+    const el=$(v+"View");
+    if(el) el.style.display=(v===view)?"":"none";
+  });
+}
+
+function formatTime(seconds){
+  return String(Math.floor(seconds/60)).padStart(2,"0")
+       +":"+String(seconds%60).padStart(2,"0");
+}
+
+function updateTimer(){
+  $("timer").textContent=formatTime(state.remaining);
+  $("timer").classList.toggle("warning",state.remaining<=300);
+}
+
+function startTimer(){
+  clearInterval(state.timerId);
+  updateTimer();
+  state.timerId=setInterval(()=>{
+    if(state.ended)return;
+    state.remaining--;
+    updateTimer();
+    if(state.remaining<=0){
+      state.remaining=0;
+      endAssessment();
+    }
+  },1000);
+}
+
+function countUnread(channel){
+  return inbox[channel].filter(x=>x.status==="unread").length;
+}
+
+function updateDesk(){
+  for(const channel of Object.keys(inbox)){
+    const total=inbox[channel].length;
+    const unread=countUnread(channel);
+    $(channel+"Count").textContent= `${total} items - ${unread} unread`;
+    const badge=$(channel+"Badge");
+    if(unread){
+      badge.textContent=unread+" UNREAD";
+      badge.className="badge show";
+    }else{
+      badge.textContent="";
+      badge.className="badge";
+    }
+  }
+}
+
+function openChannel(channel){
+  if(state.ended)return;
+  state.currentChannel=channel;
+  $("inboxTitle").textContent=channelNames[channel];
+  $("inboxSubtitle").textContent=`${inbox[channel].length} incoming item(s)`;
+  renderInbox();
+  showAssessmentView("inbox");
+}
+
+function renderInbox(){
+  const list=$("itemList");
+  list.innerHTML="";
+  inbox[state.currentChannel].forEach(item=>{
+    const button=document.createElement("button");
+    button.className="item";
+    button.innerHTML=`
+      <span class="dot ${item.status}"></span>
+      <span>
+        <div class="itemtitle">
+          ${escapeHtml(item.from)} — ${escapeHtml(item.subject)}
+        </div>
+        <div class="preview">
+          ${escapeHtml(item.preview)}
+        </div>
+        <div class="state ${item.status}">
+          ${labelStatus(item.status)}
+        </div>
+      </span>
+      <span class="time">${escapeHtml(item.time)}</span>
+    `;
+    button.onclick=()=>openItem(item.id);
+    list.appendChild(button);
+  });
+}
+
+function labelStatus(status){
+  return {
+    unread:"UNREAD",
+    read:"READ",
+    responded:"RESPONDED"
+  }[status];
+}
+
+function getCurrentItem(){
+  return inbox[state.currentChannel].find(x=>x.id===state.currentItem);
+}
+
+function openItem(id){
+  if(state.ended)return;
+  state.currentItem=id;
+  const item=getCurrentItem();
+  if(item.status==="unread"){
+    item.status="read";
+  }
+  $("detailTitle").textContent=item.subject;
+  $("detailMeta").innerHTML=
+    `<strong>FROM:</strong> ${escapeHtml(item.from)}<br>
+     <strong>TIME:</strong> ${escapeHtml(item.time)}<br>
+     <strong>CHANNEL:</strong> ${escapeHtml(channelNames[state.currentChannel])}`;
+  $("detailBody").innerHTML=item.body;
+  renderDetailState();
+  updateDesk();
+  showAssessmentView("detail");
+}
+
+function renderDetailState(){
+  const item=getCurrentItem();
+  $("detailState").innerHTML=
+    `<strong>${labelStatus(item.status)}</strong>
+     ${stateMessage(item.status)}`;
+  const btn=$("actionBtn");
+  btn.disabled=false;
+  if(item.status==="read"){
+    btn.textContent="RESPOND";
+    btn.style.display="";
+  } else if(item.status==="responded"){
+    btn.textContent="RESPONDED";
+    btn.disabled=true;
+    btn.style.display="";
+  } else{
+    btn.style.display="none";
+  }
+}
+
+function stateMessage(status){
+  return {
+    unread:"This item has not yet been reviewed.",
+    read:"You have opened this item. You can now submit a response.",
+    responded:"A response has been recorded for this item."
+  }[status];
+}
+
+function openResponse(){
+  if(state.ended)return;
+  const item=getCurrentItem();
+  if(item.status!=="read")return;
+  $("responseTitle").textContent="Respond — "+item.subject;
+  $("responseText").value=item.answer||"";
+  showAssessmentView("response");
+}
+
+function submitResponse(){
+  if(state.ended)return;
+  const item=getCurrentItem();
+  const answer=$("responseText").value.trim();
+  if(!answer){
+    showToast("Please enter a response.");
+    return;
+  }
+  item.answer=answer;
+  item.status="responded";
+  console.log("RESPONSE SUBMITTED",{
+    candidateId:state.candidateId,
+    itemId:item.id,
+    channel:state.currentChannel,
+    response:answer,
+    remainingSeconds:state.remaining,
+    timestamp:new Date().toISOString()
+  });
+  updateDesk();
+  renderInbox();
+  showToast("Response recorded.");
+  showAssessmentView("inbox");
+}
+
+function endAssessment(){
+  if(state.ended)return;
+  state.ended=true;
+  clearInterval(state.timerId);
+  document.querySelectorAll("#assessment button,#assessment textarea").forEach(el=>el.disabled=true);
+  $("endedCandidate").textContent="Candidate: "+state.candidateId;
+  console.log("FINAL ASSESSMENT DATA",{
+    candidateId:state.candidateId,
+    startedAt:state.startedAt,
+    endedAt:new Date().toISOString(),
+    remainingSeconds:state.remaining,
+    inbox:JSON.parse(JSON.stringify(inbox))
+  });
+  showScreen("endedScreen");
+}
+
+function showToast(message){
+  const toast=$("toast");
+  toast.textContent=message;
+  toast.style.display="block";
+  setTimeout(()=>toast.style.display="none",1700);
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+$("startBtn").onclick=()=>{
+  const candidateId=$("candidateId").value.trim();
+  const token=$("token").value.trim();
+  $("loginError").textContent="";
+  if(!candidateId){
+    $("loginError").textContent="Please enter your Candidate ID.";
+    return;
+  }
+  if(token!==CONFIG.accessToken){
+    $("loginError").textContent="Invalid access token.";
+    return;
+  }
+  state.candidateId=candidateId;
+  state.startedAt=new Date().toISOString();
+  state.remaining=CONFIG.durationSeconds;
+  state.ended=false;
+  $("candidateDisplay").textContent="TES";
+  updateDesk();
+  showScreen("assessment");
+  showAssessmentView("desk");
+  startTimer();
+};
+
+document.querySelectorAll(".channel").forEach(button=>{
+  button.onclick=()=>openChannel(button.dataset.channel);
+});
+
+$("backDeskFromInbox").onclick=()=>{
+  if(!state.ended)showAssessmentView("desk");
+};
+
+$("backInboxBtn").onclick=()=>{
+  if(!state.ended){
+    renderInbox();
+    showAssessmentView("inbox");
+  }
+};
+
+$("actionBtn").onclick=openResponse;
+
+$("cancelResponse").onclick=()=>{
+  if(!state.ended)showAssessmentView("detail");
+};
+
+$("submitResponse").onclick=submitResponse;
+
+window.addEventListener("beforeunload",event=>{
+  if(!state.ended && state.startedAt){
+    event.preventDefault();
+    event.returnValue="";
+  }
+});
+</script>
+</body>
+</html>
