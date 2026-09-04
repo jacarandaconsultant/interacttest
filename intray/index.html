@@ -13,20 +13,20 @@
   --warning:#a66a00;--success:#327047;
 }
 body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#eef0f2;color:var(--ink);overflow-x:hidden}
-button,input,textarea{font:inherit}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed;opacity:.55}
 
-/* ---------- LOGIN ---------- */
+/* ---------- LOGIN & INFO SCREENS ---------- */
 .screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:30px}
 .screen.active{display:flex}
 .card{width:min(760px,94vw);background:#fff;border-radius:18px;padding:42px;box-shadow:0 18px 50px rgba(0,0,0,.11)}
 h1,h2,h3{margin-top:0}
 .muted{color:var(--muted);line-height:1.6}
 .field{display:block;margin:22px 0}
-.field span{display:block;font-size:13px;font-weight:800;margin-bottom:8px}
-input,textarea{width:100%;border:1px solid #cbd1d6;border-radius:10px;padding:12px 14px;outline:none}
-input:focus,textarea:focus{border-color:#5d6873}
+.field span{display:block;font-size:13px;font-weight:800;margin-bottom:8px; color:#4a515a}
+input,textarea,select{width:100%;border:1px solid #cbd1d6;border-radius:10px;padding:12px 14px;outline:none;background:#fff;}
+input:focus,textarea:focus,select:focus{border-color:#5d6873}
 textarea{min-height:220px;resize:vertical}
 .primary,.secondary{border-radius:10px;padding:12px 20px;font-weight:800}
 .primary{border:0;background:var(--ink);color:white}
@@ -34,7 +34,7 @@ textarea{min-height:220px;resize:vertical}
 .error{color:#a52a2a;min-height:20px;font-size:14px}
 
 /* ---------- APP ---------- */
-#assessment{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding: 32px;}
+#assessment{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding: 32px; position:relative;}
 #assessment.active{display:flex}
 
 #window {
@@ -46,7 +46,6 @@ textarea{min-height:220px;resize:vertical}
   position: relative;
 }
 
-/* Bingkai atas ala MacOS */
 .window-frame {
   height: 38px;
   background: #f0f1f3;
@@ -57,27 +56,13 @@ textarea{min-height:220px;resize:vertical}
   border-bottom: 1px solid #dcdfe4;
 }
 
-.window-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.control-red, .control-yellow, .control-green {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
+.window-controls {display: flex; gap: 8px;}
+.control-red, .control-yellow, .control-green {width: 12px; height: 12px; border-radius: 50%;}
 .control-red { background: #ff5f56; }
 .control-yellow { background: #ffbd2e; }
 .control-green { background: #27c93f; }
+.window-frame-icon {color: #a0a5ab; font-size: 14px;}
 
-.window-frame-icon {
-  color: #a0a5ab;
-  font-size: 14px;
-}
-
-/* Header Gelap */
 .topbar{
   height: 60px;
   background: var(--ink);
@@ -88,45 +73,63 @@ textarea{min-height:220px;resize:vertical}
   padding: 0 28px;
 }
 
-.window-title {
-  font-weight: 500;
-  font-size: 15px;
-}
-
+.window-title {font-weight: 500; font-size: 15px;}
 .topright{display:flex;align-items:center;gap: 28px;}
 .topright-text { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #a4abb5;}
 .timer{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;min-width:60px;text-align:right}
 .timer.warning{color:#ffbd2e}
 
 /* ---------- DESK ---------- */
-#deskView.main {
-  width: 100%;
-  margin: 0;
-}
-
+#deskView.main {width: 100%; margin: 0;}
 .desk {
   background: var(--desk-bg);
   padding: 50px 60px 80px;
   min-height: 550px;
 }
 
-.desk-content-header {
-  text-align: center;
-  margin-bottom: 50px;
-}
+.desk-content-header {text-align: center; margin-bottom: 40px;}
+.desk-content-header h1 {font-size: 34px; margin-bottom: 12px; color: #1a1d21;}
 
-.desk-content-header h1 {
-  font-size: 34px;
-  margin-bottom: 12px;
-  color: #1a1d21;
-}
-
-.desk-content-header .subtitle {
-  color: #4a515a;
-  font-size: 15px;
-  max-width: 600px;
-  margin: 0 auto 35px;
+.role-context {
+  background: #ffffff;
+  border: 1px solid #dcdfe4;
+  border-left: 5px solid var(--ink);
+  padding: 25px 30px;
+  border-radius: 8px;
+  text-align: left;
+  max-width: 900px;
+  margin: 0 auto 40px;
+  color: #3a4149;
+  font-size: 14px;
   line-height: 1.6;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.role-context h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #1a1d21;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.role-context .info-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px 15px;
+  margin-bottom: 15px;
+}
+
+.role-context .info-label {
+  font-weight: 700;
+  color: #5c6673;
+}
+
+.role-context ul {
+  margin-top: 5px;
+  padding-left: 20px;
+  margin-bottom: 15px;
 }
 
 .desk-label {
@@ -136,76 +139,32 @@ textarea{min-height:220px;resize:vertical}
   letter-spacing: .15em;
   text-transform: uppercase;
   margin-bottom: 25px;
+  text-align: center;
 }
 
 .channelgrid{display:grid;grid-template-columns:repeat(3,1fr);gap: 30px; max-width: 900px; margin: 0 auto;}
 .channel {
-  position: relative;
-  border: 0;
-  border-radius: 12px;
-  background: #ffffff;
-  padding: 35px 25px;
-  text-align: center;
+  position: relative; border: 0; border-radius: 12px; background: #ffffff; padding: 35px 25px; text-align: center;
   box-shadow: 0 8px 24px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
   transition: transform .2s ease, box-shadow .2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
+  display: flex; flex-direction: column; align-items: center; gap: 15px;
 }
-
 .channel:hover{transform:translateY(-6px);box-shadow: 0 16px 32px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);}
-
-.channel .icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
-  height: 64px;
-  width: 64px;
-}
-
-.channel h2 {
-  margin: 0;
-  font-size: 22px;
-  color: #1a1d21;
-}
-
-.count {
-  font-size: 14px;
-  color: var(--muted);
-}
-
+.channel .icon {display: flex; justify-content: center; align-items: center; margin-bottom: 5px; height: 64px; width: 64px;}
+.channel h2 {margin: 0; font-size: 22px; color: #1a1d21;}
+.count {font-size: 14px; color: var(--muted);}
 .badge {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  border-radius: 999px;
-  padding: 6px 10px;
-  background: var(--danger);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  display: none;
+  position: absolute; right: 15px; top: 15px; border-radius: 999px; padding: 6px 10px;
+  background: var(--danger); color: white; font-size: 10px; font-weight: 700; display: none;
 }
+.badge.show {display: block;}
 
-.badge.show {
-  display: block;
-}
-
-/* ---------- INBOX ---------- */
+/* ---------- INBOX & DETAIL ---------- */
 .panel{background:white;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.06); border: 1px solid #e7eaec;}
-.panelhead{
-  padding:20px 26px;
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom: 10px;
-}
+.panelhead{padding:20px 26px; display:flex;justify-content:space-between;align-items:center; margin-bottom: 10px;}
 .item{
-  width:100%;border:0;border-bottom:1px solid #f0f2f4;background:white;
-  padding:22px 28px;text-align:left;display:grid;
-  grid-template-columns:12px 1fr auto;gap:18px;align-items:center;
-  transition: background 0.15s;
+  width:100%;border:0;border-bottom:1px solid #f0f2f4;background:white; padding:22px 28px;
+  text-align:left;display:grid; grid-template-columns:12px 1fr auto;gap:18px;align-items:center; transition: background 0.15s;
 }
 .item:hover{background:#f9fafb}
 .item:last-child{border-bottom:0}
@@ -220,14 +179,35 @@ textarea{min-height:220px;resize:vertical}
 .state.read{color:#8b9299}
 .state.responded{color:var(--success)}
 
-/* ---------- DETAIL ---------- */
-.paper{
-  background:#ffffff;padding:50px 60px;border-radius:12px;
-  box-shadow:0 12px 35px rgba(0,0,0,.08);
-  border: 1px solid #e7eaec;
-}
+.paper{background:#ffffff;padding:50px 60px;border-radius:12px;box-shadow:0 12px 35px rgba(0,0,0,.08);border: 1px solid #e7eaec;}
 .meta{color:var(--muted);font-size:13px;line-height:1.8;border-bottom:1px solid #e7eaec;padding-bottom:20px;margin-bottom:30px}
-.paper p{line-height:1.75; color: #3a4149;}
+.paper p{line-height:1.75; color: #3a4149; margin-bottom: 16px;}
+.paper blockquote {
+  border-left: 4px solid #dcdfe4;
+  margin: 15px 0;
+  padding: 10px 20px;
+  background: #f8f9fa;
+  font-style: italic;
+  color: #5c6673;
+}
+.memo-header {
+  border-bottom: 2px solid #1a1d21;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+.memo-header table {
+  width: 100%;
+  font-size: 14px;
+}
+.memo-header td {
+  padding: 4px 0;
+  vertical-align: top;
+}
+.memo-header td:first-child {
+  width: 90px;
+  font-weight: 700;
+  color: #5c6673;
+}
 .statusbox{margin:30px 0;padding:16px 20px;border-radius:10px;background:#f8f9fa;font-size:14px; border: 1px solid #e7eaec;}
 .statusbox strong{display:block;margin-bottom:6px; color: #1a1d21;}
 .actionbar{display:flex;justify-content:space-between;gap:12px;margin-top:40px}
@@ -243,12 +223,32 @@ textarea{min-height:220px;resize:vertical}
 .bubble.you{background:#e2eedf;margin-left:auto; color: #214018;}
 .bubble small{display:block;color:#88929c;font-size:11px;margin-top:6px}
 
-/* ---------- RESPONSE ---------- */
-.response-card{width:100%; border: 1px solid #e7eaec;}
+/* ---------- END TEST BUTTON ---------- */
+.floating-end-btn {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 30px;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 10px 20px rgba(204, 115, 115, 0.4);
+  transition: transform 0.2s;
+  z-index: 50;
+}
+.floating-end-btn:hover {
+  transform: translateY(-3px);
+}
 
-/* ---------- END ---------- */
-.ended{text-align:center}
-.ended .big{font-size:64px;margin-bottom:10px}
+/* ---------- THANK YOU SCREEN ---------- */
+.ended{text-align:center; padding: 60px 40px;}
+.ended .big{font-size:72px;margin-bottom:20px}
+.ended h1 {font-size: 32px; color: #1a1d21; margin-bottom: 15px;}
+.ended p {font-size: 16px; color: #5c6673; max-width: 500px; margin: 0 auto;}
+
 .toast{
   position:fixed;left:50%;bottom:30px;transform:translateX(-50%);
   background:#1a1d21;color:white;padding:14px 22px;border-radius:10px;
@@ -261,42 +261,62 @@ textarea{min-height:220px;resize:vertical}
   .desk{padding:40px 20px}
   .paper{padding:30px 20px}
   .card{padding:30px 20px}
-  .item{grid-template-columns:10px 1fr}
-  .time{display:none}
+  .floating-end-btn{bottom: 20px; right: 20px;}
+  .role-context .info-grid {grid-template-columns: 1fr;}
+  .role-context .info-label {margin-top: 10px; margin-bottom: 2px;}
 }
 </style>
 </head>
 
 <body>
 
-<section id="loginScreen" class="screen active">
+<!-- HALAMAN 1: TOKEN -->
+<section id="tokenScreen" class="screen active">
   <div class="card">
     <h1>IN-TRAY ASSESSMENT</h1>
-    <p class="muted">
-      This simulation assesses how you review incoming information,
-      determine priorities, and decide what requires action.
-    </p>
-
-    <label class="field">
-      <span>CANDIDATE ID</span>
-      <input id="candidateId" autocomplete="off" placeholder="e.g. CAND-001">
-    </label>
-
+    <p class="muted">Silakan masukkan akses token untuk memulai.</p>
     <label class="field">
       <span>ACCESS TOKEN</span>
       <input id="token" autocomplete="off" placeholder="Enter your access token">
     </label>
-
-    <div id="loginError" class="error"></div>
-    <button id="startBtn" class="primary" style="margin-top:10px;">START ASSESSMENT</button>
-
-    <p class="muted" style="font-size:12px;margin-top:25px">
-      Prototype token: <strong>INTRAY-2026</strong>
-    </p>
+    <div id="tokenError" class="error"></div>
+    <button id="verifyTokenBtn" class="primary" style="margin-top:10px;">BERIKUTNYA</button>
   </div>
 </section>
 
-<section id="assessment">
+<!-- HALAMAN 2: DATA DIRI -->
+<section id="infoScreen" class="screen">
+  <div class="card">
+    <h1>DATA DIRI</h1>
+    <p class="muted">Lengkapi profil Anda sebelum memulai simulasi.</p>
+    
+    <label class="field">
+      <span>NAMA LENGKAP</span>
+      <input id="inputNama" autocomplete="off" placeholder="Nama Lengkap">
+    </label>
+    
+    <label class="field">
+      <span>LEVEL JABATAN</span>
+      <select id="inputLevel">
+        <option value="">Pilih Level...</option>
+        <option value="Staff">Staff</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Manager">Manager</option>
+      </select>
+    </label>
+
+    <label class="field">
+      <span>JABATAN SAAT INI</span>
+      <input id="inputJabatan" autocomplete="off" placeholder="Contoh: Marketing Executive">
+    </label>
+
+    <div id="infoError" class="error"></div>
+    <button id="startBtn" class="primary" style="margin-top:10px;">MULAI ASSESMEN</button>
+  </div>
+</section>
+
+<!-- HALAMAN 3: DESK -->
+<section id="assessment" class="screen">
   <div id="window">
     <div class="window-frame">
       <div class="window-controls">
@@ -322,9 +342,32 @@ textarea{min-height:220px;resize:vertical}
       <div class="desk">
         <div class="desk-content-header">
           <h1>Your Desk</h1>
-          <p class="subtitle">
-            Information has arrived through different channels. Review and prioritize what requires your attention.
-          </p>
+          <div class="role-context">
+            <h3>INFORMASI PERAN ANDA</h3>
+            <div class="info-grid">
+              <div class="info-label">Nama Peran</div>
+              <div>Wening Endah Sulistya</div>
+              <div class="info-label">Posisi</div>
+              <div>Sekretaris Eksekutif Direktur Proyek</div>
+              <div class="info-label">Industri</div>
+              <div>PT BANGUN JAYA, Konstruksi Jalan Raya (Area Kalimantan)</div>
+            </div>
+            
+            <div class="info-label" style="margin-top: 15px;">Tujuan Jabatan:</div>
+            <p style="margin-top:5px; margin-bottom:10px;">Mendukung Direktur Proyek dalam pengelolaan komunikasi, koordinasi operasional, serta pengambilan keputusan strategis terkait proyek pembangunan jalan raya, termasuk hubungan dengan klien, pemerintah daerah, dan stakeholder lainnya.</p>
+
+            <div class="info-label">Tanggung Jawab Utama:</div>
+            <ul>
+              <li>Mengelola komunikasi dengan klien (pemerintah, vendor, masyarakat).</li>
+              <li>Menyusun prioritas agenda Direktur.</li>
+              <li>Menangani keluhan stakeholder proyek.</li>
+              <li>Mengkoordinasikan informasi lintas divisi (teknik, operasional, legal).</li>
+              <li>Memberikan masukan administratif dan strategis kepada Direktur.</li>
+            </ul>
+
+            <div class="info-label">Instruksi:</div>
+            <p style="margin-top:5px; margin-bottom:0;">Anda adalah Sekretaris Eksekutif yang baru menjabat selama 2 minggu. Hari ini tanggal 22 April 2026, pukul 08.30, Anda menerima beberapa pesan, meliputi email, memo, dan percakapan WA. Atasan Anda, Pak Maryono, Direktur Proyek, sedang menjalani perjalanan dinas ke luar pulau selama empat hari. Sehingga Anda harus memberikan respon terhadap pesan-pesan tersebut sesuai dengan kapasitas Anda sebagai seorang Sekretaris Eksekutif.</p>
+          </div>
           <div class="desk-label">INCOMING INFORMATION</div>
         </div>
 
@@ -372,6 +415,8 @@ textarea{min-height:220px;resize:vertical}
           </button>
         </div>
       </div>
+      
+      <button id="endTestBtn" class="floating-end-btn">■ END TEST</button>
     </main>
 
     <main id="inboxView" class="main" style="display:none; padding: 30px;">
@@ -388,7 +433,7 @@ textarea{min-height:220px;resize:vertical}
     <main id="detailView" class="main" style="display:none; padding: 30px;">
       <div class="paper">
         <div id="detailMeta" class="meta"></div>
-        <h1 id="detailTitle" style="font-size: 26px; margin-bottom: 20px;"></h1>
+        <h1 id="detailTitle" style="font-size: 24px; margin-bottom: 20px;"></h1>
         <div id="detailBody"></div>
         <div id="detailState" class="statusbox"></div>
 
@@ -403,14 +448,13 @@ textarea{min-height:220px;resize:vertical}
       <div class="card response-card">
         <h1 id="responseTitle" style="font-size: 24px; margin-bottom: 10px;"></h1>
         <p class="muted" style="margin-bottom: 25px;">
-          Record what you would do. Explain your priority, immediate action,
-          and any follow-up you consider necessary.
+          Tuliskan respons Anda. Jelaskan prioritas, tindakan langsung, dan tindak lanjut yang diperlukan.
         </p>
 
-        <textarea id="responseText" placeholder="Type your response here..."></textarea>
+        <textarea id="responseText" placeholder="Ketik respons Anda di sini..."></textarea>
 
         <div class="actionbar">
-          <button id="cancelResponse" class="secondary">← BACK</button>
+          <button id="cancelResponse" class="secondary">← KEMBALI</button>
           <button id="submitResponse" class="primary">SUBMIT RESPONSE</button>
         </div>
       </div>
@@ -418,192 +462,174 @@ textarea{min-height:220px;resize:vertical}
   </div>
 </section>
 
+<!-- HALAMAN 4: TERIMA KASIH -->
 <section id="endedScreen" class="screen">
   <div class="card ended">
-    <div class="big">⏱</div>
-    <h1>TIME'S UP</h1>
+    <div class="big">🎉</div>
+    <h1>TERIMA KASIH</h1>
     <p class="muted">
-      The In-Tray assessment has ended. Further interaction is disabled.
+      Asesmen Anda telah selesai. Semua data diri dan respons jawaban telah berhasil disimpan ke dalam sistem kami.
+      <br><br>
+      Anda sudah dapat menutup tab atau halaman ini.
     </p>
-    <p id="endedCandidate" class="muted"></p>
   </div>
 </section>
 
 <div id="toast" class="toast"></div>
 
 <script>
-/*
-============================================================
-IN-TRAY PRIORITIZATION PROTOTYPE
-============================================================
-*/
-
+/* ==========================================================
+   KONFIGURASI
+========================================================== */
 const CONFIG = {
-  durationSeconds: 45 * 60,
-  accessToken: "INTRAY-2026"
+  durationSeconds: 45 * 60
 };
+
+// GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT-MU
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTVhIkV_yGJfjRtVJZWkrQwsgXAKCrGuOUDobomP2Y7UtDyI8e6VhonPm-T0HSJ9M/exec"; 
 
 const inbox = {
   email: [
     {
       id:"email-01",
-      from:"Sarah — Major Client",
-      subject:"URGENT: Customer complaint",
-      time:"08:12",
+      from:"Perwakilan Warga Desa Sitepu",
+      subject:"Keluhan Warga Desa Sitepu Terkait Dampak Debu Proyek Jalan",
+      time:"08:15",
       status:"unread",
-      preview:"Several items were missing from yesterday's delivery.",
+      preview:"Keluhan terkait dampak aktivitas pembangunan jalan yang menimbulkan debu berlebihan...",
       body:`
-        <p>A major customer has reported that several items were
-        missing from yesterday's delivery.</p>
-        <p>The customer is waiting for an explanation and has
-        indicated that the issue may affect their next order.</p>
-        <p>You are responsible for deciding what should happen next.</p>
+        <p>Yth. Manajemen PT Bangun Jaya,</p>
+        <p>Kami selaku perwakilan warga Desa Sitepu ingin menyampaikan keluhan terkait dampak aktivitas pembangunan jalan yang saat ini sedang berlangsung di wilayah kami.</p>
+        <p>Sejak beberapa minggu terakhir, aktivitas proyek telah menimbulkan debu berlebihan yang sangat mengganggu kenyamanan dan kesehatan warga. Beberapa warga, khususnya anak-anak dan lansia, mulai mengalami gangguan pernapasan. Hingga saat ini, kami belum melihat adanya langkah konkret dari pihak perusahaan untuk mengurangi dampak tersebut.</p>
+        <p>Kami sangat berharap permasalahan ini dapat segera ditangani secara serius. Apabila tidak ada tindak lanjut dalam waktu dekat, kami terpaksa mempertimbangkan untuk menyampaikan hal ini kepada pihak terkait maupun media.</p>
+        <p>Demikian yang dapat kami sampaikan. Kami berharap dapat segera menerima respon dan solusi dari PT Bangun Jaya.</p>
+        <br>
+        <p>Hormat kami,</p>
+        <p>Perwakilan Warga Desa Sitepu</p>
       `
     },
     {
       id:"email-02",
-      from:"David — Operations",
-      subject:"Staffing concern",
-      time:"08:35",
+      from:"Pemerintah Kota Singkawang",
+      subject:"Permohonan Rapat Koordinasi Terkait Progres dan Keterlambatan Proyek Jalan",
+      time:"08:25",
       status:"unread",
-      preview:"There may be insufficient staffing coverage next week.",
+      preview:"Permohonan rapat koordinasi membahas progres dan isu keterlambatan proyek...",
       body:`
-        <p>David has flagged a staffing gap for next week.</p>
-        <p>If no adjustment is made, one service area may operate
-        below the expected level.</p>
-        <p>Consider whether this requires immediate action or
-        further information.</p>
-      `
-    },
-    {
-      id:"email-03",
-      from:"Finance",
-      subject:"Monthly performance report",
-      time:"09:02",
-      status:"unread",
-      preview:"February figures are now available for review.",
-      body:`
-        <p>The monthly performance report is available.</p>
-        <p>One indicator has deteriorated compared with the previous
-        month, although there is no immediate operational impact reported.</p>
-      `
-    },
-    {
-      id:"email-04",
-      from:"Internal Communications",
-      subject:"Team social event",
-      time:"09:15",
-      status:"unread",
-      preview:"Reminder about the team event next Friday.",
-      body:`
-        <p>This is a reminder about the team social event next Friday.</p>
-        <p>Please confirm attendance when convenient.</p>
+        <p>Yth. Manajemen PT Bangun Jaya,</p>
+        <p>Sehubungan dengan pelaksanaan proyek pembangunan jalan di Wilayah Singkawang, kami dari Pemerintah Kota bermaksud untuk mengadakan rapat koordinasi dalam waktu dekat guna membahas beberapa hal penting, antara lain:</p>
+        <ul>
+          <li>Progres terkini pelaksanaan proyek</li>
+          <li>Klarifikasi terkait isu keterlambatan yang terjadi di lapangan</li>
+        </ul>
+        <p>Rapat ini kami nilai penting untuk memastikan keselarasan informasi serta langkah-langkah strategis yang perlu diambil ke depan. Oleh karena itu, kami mengharapkan kehadiran Direktur Proyek.</p>
+        <p>Kami mengusulkan pelaksanaan rapat pada:</p>
+        <table style="margin-bottom:15px; margin-left: 20px;">
+          <tr><td style="padding-right: 15px; font-weight: bold;">Hari/Tanggal</td><td>: 24 April 2026</td></tr>
+          <tr><td style="padding-right: 15px; font-weight: bold;">Waktu</td><td>: 13.00-15.00 waktu setempat</td></tr>
+          <tr><td style="padding-right: 15px; font-weight: bold;">Tempat</td><td>: Kantor Pemerintah Kota Singkawang</td></tr>
+        </table>
+        <p>Demikian kami sampaikan. Atas perhatian dan kerja samanya, kami ucapkan terima kasih.</p>
+        <br>
+        <p>Hormat kami,</p>
+        <p>Pemerintah Kota Singkawang</p>
       `
     }
   ],
   memo: [
     {
       id:"memo-01",
-      from:"HR Department",
-      subject:"Policy update",
-      time:"08:20",
+      from:"Manajer Teknik",
+      subject:"Ketidaksesuaian Pelaksanaan dengan Spesifikasi Teknis",
+      time:"08:05",
       status:"unread",
-      preview:"A revised internal procedure will come into effect next month.",
+      preview:"Penyampaian deviasi pelaksanaan pekerjaan dengan spesifikasi teknis...",
       body:`
-        <p>HR has circulated a revised internal procedure that will
-        come into effect next month.</p>
-        <p>No immediate action is required, but managers should be
-        aware of the change.</p>
+        <div class="memo-header">
+          <strong>MEMO INTERNAL</strong>
+          <table>
+            <tr><td>Kepada</td><td>: Direktur Proyek</td></tr>
+            <tr><td>Dari</td><td>: Manajer Teknik</td></tr>
+            <tr><td>Tanggal</td><td>: 22 April 2026</td></tr>
+            <tr><td>Perihal</td><td>: Ketidaksesuaian Pelaksanaan dengan Spesifikasi Teknis</td></tr>
+          </table>
+        </div>
+        <p>Yth. Bapak Maryono,</p>
+        <p>Melalui memo ini, kami ingin menyampaikan perhatian terkait pelaksanaan pekerjaan di lapangan oleh tim operasional yang dalam beberapa kesempatan tidak sepenuhnya mengikuti spesifikasi teknis yang telah ditetapkan.</p>
+        <p>Beberapa temuan di lapangan menunjukkan adanya deviasi dalam proses pengerjaan, khususnya pada [contoh: metode pemadatan, ketebalan lapisan, atau penggunaan material]. Apabila kondisi ini terus berlanjut, kami khawatir hal tersebut dapat berdampak pada penurunan kualitas hasil pekerjaan, serta berpotensi menimbulkan risiko pada tahap evaluasi maupun pemeliharaan di kemudian hari.</p>
+        <p>Kami memahami adanya tekanan target waktu di lapangan. Namun demikian, kepatuhan terhadap standar teknis tetap menjadi prioritas utama untuk memastikan keberhasilan proyek secara keseluruhan.</p>
+        <p>Kami berharap hal ini dapat segera ditindaklanjuti demi menjaga kualitas dan keberlanjutan proyek.</p>
+        <p>Demikian disampaikan. Atas perhatian dan arahannya, kami ucapkan terima kasih.</p>
+        <br>
+        <p>Hormat kami,</p>
+        <p>Ir. Rudi Subroto,<br>Manajer Teknik</p>
       `
     },
     {
       id:"memo-02",
-      from:"Facilities",
-      subject:"Office maintenance",
-      time:"08:50",
+      from:"Divisi Humas",
+      subject:"URGENT – Pemberitaan Negatif Terkait Proyek Jalan Kalimantan",
+      time:"08:30",
       status:"unread",
-      preview:"Planned maintenance will affect part of the office tomorrow.",
+      preview:"Telah muncul pemberitaan di salah satu media online dengan judul proyek jalan diduga merusak...",
       body:`
-        <p>Facilities has advised that maintenance will affect part
-        of the office tomorrow morning.</p>
-        <p>The disruption is expected to be manageable, but teams
-        should be informed.</p>
+        <div class="memo-header">
+          <strong>MEMO INTERNAL</strong>
+          <table>
+            <tr><td>Kepada</td><td>: Sekretaris Eksekutif</td></tr>
+            <tr><td>Dari</td><td>: Divisi Humas</td></tr>
+            <tr><td>Tanggal</td><td>: 22 April 2026</td></tr>
+            <tr><td>Perihal</td><td>: URGENT – Pemberitaan Negatif Terkait Proyek Jalan Kalimantan</td></tr>
+          </table>
+        </div>
+        <p>Yth. Mbak Wening,</p>
+        <p>Selamat pagi.</p>
+        <p>Kami ingin menginformasikan bahwa pada pagi ini telah muncul pemberitaan di salah satu media online dengan judul: <strong>“Proyek Jalan Kalimantan Diduga Merusak Lingkungan dan Merugikan Warga Lokal.”</strong></p>
+        <p>Berikut petikan beritanya:</p>
+        <blockquote>
+          Kalimantan Barat – Proyek pembangunan jalan yang dikerjakan oleh PT Bangun Jaya di wilayah Kalimantan Barat menuai keluhan dari masyarakat setempat. Sejumlah warga Desa Sitepu mengungkapkan bahwa aktivitas proyek telah menyebabkan peningkatan debu yang signifikan, serta diduga berdampak pada kesehatan warga, khususnya anak-anak dan lansia.<br><br>
+          Selain itu, warga juga menyoroti dugaan kerusakan lingkungan di sekitar area proyek, termasuk berkurangnya kualitas air dan terganggunya aktivitas pertanian. Hingga saat ini, masyarakat mengaku belum melihat adanya langkah konkret dari pihak perusahaan untuk mengatasi dampak tersebut.<br><br>
+          “Kami tidak menolak pembangunan, tetapi kami ingin perusahaan juga memperhatikan kondisi kami. Sampai sekarang belum ada solusi yang jelas,” ujar salah satu perwakilan warga.<br><br>
+          Pihak pemerintah daerah menyatakan akan segera melakukan peninjauan lapangan untuk memastikan kebenaran informasi tersebut. Sementara itu, hingga berita ini diturunkan, pihak PT Bangun Jaya belum memberikan pernyataan resmi terkait keluhan warga.
+        </blockquote>
+        <p>Pemberitaan tersebut berpotensi menimbulkan dampak reputasi yang signifikan bagi perusahaan, terutama jika tidak segera direspons secara tepat dan terkoordinasi. Hingga saat ini, kami memahami bahwa Bapak Direktur Proyek kemungkinan belum menerima informasi terkait isu ini.</p>
+        <p>Sehubungan dengan hal tersebut, kami menyarankan agar:</p>
+        <ol>
+          <li>Informasi ini segera dilaporkan kepada Direktur Proyek melalui memo internal sebagai bentuk eskalasi resmi.</li>
+          <li>Disertakan ringkasan isu utama dalam pemberitaan, potensi risiko, serta opsi langkah awal penanganan (misalnya klarifikasi, investigasi internal, atau penyiapan pernyataan resmi).</li>
+        </ol>
+        <p>Demikian kami sampaikan. Terima kasih atas perhatian dan koordinasinya.</p>
+        <br>
+        <p>Hormat kami,</p>
+        <p>Dennis Marpaung<br>Staf Humas<br>PT Bangun Jaya</p>
       `
     }
   ],
   message: [
     {
       id:"message-01",
-      from:"John Smith",
-      subject:"Can you call me urgently?",
-      time:"08:41",
+      from:"PT ASPHALINDO NUSA",
+      subject:"Tunggakan Pembayaran 3 Minggu",
+      time:"08:12",
       status:"unread",
-      preview:"John has asked for an urgent call regarding a client issue.",
+      preview:"Kami ingin menindaklanjuti terkait pembayaran invoice yang sudah tertunda...",
       body:`
         <div class="chat">
           <div class="bubble them">
-            Can you call me urgently?
-            <small>John Smith · 08:41</small>
-          </div>
-          <div class="bubble you">
-            What's the issue?
-            <small>You · 08:43</small>
+            Selamat pagi Ibu. Kami ingin menindaklanjuti terkait pembayaran invoice yang sudah tertunda selama 3 minggu. Sampai saat ini kami belum menerima kejelasan maupun konfirmasi pembayaran dari pihak PT Bangun Jaya.
+            <small>PT ASPHALINDO NUSA · 08:12</small>
           </div>
           <div class="bubble them">
-            It's regarding the client delivery. We may need to act before noon.
-            <small>John Smith · 08:44</small>
-          </div>
-        </div>
-      `
-    },
-    {
-      id:"message-02",
-      from:"Operations Team",
-      subject:"Possible service disruption",
-      time:"08:53",
-      status:"unread",
-      preview:"A possible service disruption has been reported.",
-      body:`
-        <div class="chat">
-          <div class="bubble them">
-            We have a possible service disruption affecting one customer account.
-            <small>Operations Team · 08:53</small>
+            Kami perlu menegaskan bahwa kondisi ini sudah sangat mengganggu operasional kami, terutama dalam pengadaan dan distribusi material untuk proyek Anda.
+            <small>PT ASPHALINDO NUSA · 08:14</small>
           </div>
           <div class="bubble them">
-            More information is being checked.
-            <small>Operations Team · 08:55</small>
+            Jika dalam waktu 2 hari ke depan tidak ada penyelesaian pembayaran, kami tidak memiliki pilihan selain menghentikan sementara pengiriman aspal ke lokasi proyek.
+            <small>PT ASPHALINDO NUSA · 08:16</small>
           </div>
-        </div>
-      `
-    },
-    {
-      id:"message-03",
-      from:"Anna",
-      subject:"Tomorrow's meeting",
-      time:"09:10",
-      status:"unread",
-      preview:"Confirmation of tomorrow's meeting time.",
-      body:`
-        <div class="chat">
           <div class="bubble them">
-            Just confirming tomorrow's meeting at 10:00.
-            <small>Anna · 09:10</small>
-          </div>
-        </div>
-      `
-    },
-    {
-      id:"message-04",
-      from:"IT Helpdesk",
-      subject:"Password reminder",
-      time:"09:18",
-      status:"unread",
-      preview:"Routine reminder to update your password.",
-      body:`
-        <div class="chat">
-          <div class="bubble them">
-            This is a routine reminder to update your password according to company policy.
-            <small>IT Helpdesk · 09:18</small>
+            Kami harap hal ini bisa menjadi perhatian serius, karena dampaknya tentu akan langsung memengaruhi progres proyek di lapangan.
+            <small>PT ASPHALINDO NUSA · 08:17</small>
           </div>
         </div>
       `
@@ -612,22 +638,19 @@ const inbox = {
 };
 
 let state = {
-  candidateId:"",
-  currentChannel:null,
-  currentItem:null,
-  remaining:CONFIG.durationSeconds,
-  timerId:null,
-  ended:false,
-  startedAt:null
+  uid: "",
+  candidateData: {},
+  currentChannel: null,
+  currentItem: null,
+  remaining: CONFIG.durationSeconds,
+  timerId: null,
+  ended: false,
+  isStarted: false,
+  answerSequence: []
 };
 
 const $ = id => document.getElementById(id);
-
-const channelNames = {
-  email:"Email Inbox",
-  memo:"Memo Tray",
-  message:"Messages"
-};
+const channelNames = { email:"Email Inbox", memo:"Memo Tray", message:"Messages" };
 
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
@@ -642,8 +665,7 @@ function showAssessmentView(view){
 }
 
 function formatTime(seconds){
-  return String(Math.floor(seconds/60)).padStart(2,"0")
-       +":"+String(seconds%60).padStart(2,"0");
+  return String(Math.floor(seconds/60)).padStart(2,"0") +":"+String(seconds%60).padStart(2,"0");
 }
 
 function updateTimer(){
@@ -665,9 +687,16 @@ function startTimer(){
   },1000);
 }
 
-function countUnread(channel){
-  return inbox[channel].filter(x=>x.status==="unread").length;
+function sendToSheets(payload) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.error("Error saving data:", err));
 }
+
+function countUnread(channel){ return inbox[channel].filter(x=>x.status==="unread").length; }
 
 function updateDesk(){
   for(const channel of Object.keys(inbox)){
@@ -703,15 +732,9 @@ function renderInbox(){
     button.innerHTML=`
       <span class="dot ${item.status}"></span>
       <span>
-        <div class="itemtitle">
-          ${escapeHtml(item.from)} — ${escapeHtml(item.subject)}
-        </div>
-        <div class="preview">
-          ${escapeHtml(item.preview)}
-        </div>
-        <div class="state ${item.status}">
-          ${labelStatus(item.status)}
-        </div>
+        <div class="itemtitle">${escapeHtml(item.from)} — ${escapeHtml(item.subject)}</div>
+        <div class="preview">${escapeHtml(item.preview)}</div>
+        <div class="state ${item.status}">${labelStatus(item.status)}</div>
       </span>
       <span class="time">${escapeHtml(item.time)}</span>
     `;
@@ -720,31 +743,27 @@ function renderInbox(){
   });
 }
 
-function labelStatus(status){
-  return {
-    unread:"UNREAD",
-    read:"READ",
-    responded:"RESPONDED"
-  }[status];
-}
-
-function getCurrentItem(){
-  return inbox[state.currentChannel].find(x=>x.id===state.currentItem);
-}
+function labelStatus(status){ return { unread:"UNREAD", read:"READ", responded:"RESPONDED" }[status]; }
+function getCurrentItem(){ return inbox[state.currentChannel].find(x=>x.id===state.currentItem); }
 
 function openItem(id){
   if(state.ended)return;
   state.currentItem=id;
   const item=getCurrentItem();
-  if(item.status==="unread"){
-    item.status="read";
-  }
+  if(item.status==="unread") item.status="read";
   $("detailTitle").textContent=item.subject;
-  $("detailMeta").innerHTML=
-    `<strong>FROM:</strong> ${escapeHtml(item.from)}<br>
-     <strong>TIME:</strong> ${escapeHtml(item.time)}<br>
-     <strong>CHANNEL:</strong> ${escapeHtml(channelNames[state.currentChannel])}`;
+  
+  let metaHtml = `<strong>FROM:</strong> ${escapeHtml(item.from)}<br>`;
+  
+  // Custom format memo meta
+  if (state.currentChannel !== 'memo') {
+    metaHtml += `<strong>TIME:</strong> ${escapeHtml(item.time)}<br>`;
+  }
+  metaHtml += `<strong>CHANNEL:</strong> ${escapeHtml(channelNames[state.currentChannel])}`;
+  
+  $("detailMeta").innerHTML = metaHtml;
   $("detailBody").innerHTML=item.body;
+  
   renderDetailState();
   updateDesk();
   showAssessmentView("detail");
@@ -752,36 +771,32 @@ function openItem(id){
 
 function renderDetailState(){
   const item=getCurrentItem();
-  $("detailState").innerHTML=
-    `<strong>${labelStatus(item.status)}</strong>
-     ${stateMessage(item.status)}`;
+  $("detailState").innerHTML= `<strong>${labelStatus(item.status)}</strong> ${stateMessage(item.status)}`;
   const btn=$("actionBtn");
-  btn.disabled=false;
-  if(item.status==="read"){
-    btn.textContent="RESPOND";
-    btn.style.display="";
-  } else if(item.status==="responded"){
-    btn.textContent="RESPONDED";
-    btn.disabled=true;
-    btn.style.display="";
-  } else{
-    btn.style.display="none";
+  
+  if(item.status==="read" || item.status==="responded"){ 
+    btn.disabled=false;
+    btn.textContent = item.status === "responded" ? "EDIT RESPONSE" : "RESPOND";
+    btn.style.display=""; 
+  } else { 
+    btn.style.display="none"; 
   }
 }
 
 function stateMessage(status){
-  return {
-    unread:"This item has not yet been reviewed.",
-    read:"You have opened this item. You can now submit a response.",
-    responded:"A response has been recorded for this item."
+  return { 
+    unread: "This item has not yet been reviewed.", 
+    read: "You have opened this item. You can now submit a response.", 
+    responded: "A response has been recorded for this item. You can edit your response if needed." 
   }[status];
 }
 
 function openResponse(){
   if(state.ended)return;
   const item=getCurrentItem();
-  if(item.status!=="read")return;
-  $("responseTitle").textContent="Respond — "+item.subject;
+  if(item.status==="unread")return; 
+  
+  $("responseTitle").textContent= (item.status==="responded" ? "Edit Response — " : "Respond — ") + item.subject;
   $("responseText").value=item.answer||"";
   showAssessmentView("response");
 }
@@ -790,23 +805,26 @@ function submitResponse(){
   if(state.ended)return;
   const item=getCurrentItem();
   const answer=$("responseText").value.trim();
-  if(!answer){
-    showToast("Please enter a response.");
-    return;
-  }
+  if(!answer){ showToast("Tuliskan respon terlebih dahulu."); return; }
+  
   item.answer=answer;
   item.status="responded";
-  console.log("RESPONSE SUBMITTED",{
-    candidateId:state.candidateId,
-    itemId:item.id,
-    channel:state.currentChannel,
-    response:answer,
-    remainingSeconds:state.remaining,
-    timestamp:new Date().toISOString()
+
+  if (!state.answerSequence.includes(item.id)) {
+    state.answerSequence.push(item.id);
+  }
+
+  sendToSheets({
+    action: "UPDATE_ANSWER",
+    uid: state.uid,
+    itemId: item.id,
+    answer: answer,
+    sequence: state.answerSequence.join(" -> ")
   });
+
   updateDesk();
   renderInbox();
-  showToast("Response recorded.");
+  showToast("Jawaban tersimpan.");
   showAssessmentView("inbox");
 }
 
@@ -814,15 +832,13 @@ function endAssessment(){
   if(state.ended)return;
   state.ended=true;
   clearInterval(state.timerId);
-  document.querySelectorAll("#assessment button,#assessment textarea").forEach(el=>el.disabled=true);
-  $("endedCandidate").textContent="Candidate: "+state.candidateId;
-  console.log("FINAL ASSESSMENT DATA",{
-    candidateId:state.candidateId,
-    startedAt:state.startedAt,
-    endedAt:new Date().toISOString(),
-    remainingSeconds:state.remaining,
-    inbox:JSON.parse(JSON.stringify(inbox))
+  
+  sendToSheets({
+    action: "END_TEST",
+    uid: state.uid,
+    remainingSeconds: state.remaining
   });
+
   showScreen("endedScreen");
 }
 
@@ -830,64 +846,134 @@ function showToast(message){
   const toast=$("toast");
   toast.textContent=message;
   toast.style.display="block";
-  setTimeout(()=>toast.style.display="none",1700);
+  setTimeout(()=>toast.style.display="none",2500);
 }
 
 function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g,m=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",
-    '"':"&quot;","'":"&#039;"
-  }[m]));
+  return String(str).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;", '"':"&quot;","'":"&#039;" }[m]));
 }
 
+/* ==========================================================
+   FITUR MONITOR PERILAKU
+========================================================== */
+function updateBehaviorLog(eventType, details, penalty) {
+  if (!state.isStarted || state.ended || !state.uid) return;
+
+  sendToSheets({
+    action: "LOG_BEHAVIOR",
+    uid: state.uid,
+    eventType: eventType,
+    details: details,
+    penalty: penalty
+  });
+
+  showToast(`⚠️ Peringatan: Aktivitas di luar browser terdeteksi. Silakan kembali ke tes.`);
+}
+
+window.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    updateBehaviorLog("Pindah Tab/Minimize", "Peserta menyembunyikan tab/membuka tab lain.", 3);
+  }
+});
+
+window.addEventListener("blur", () => {
+  updateBehaviorLog("Hilang Fokus", "Fokus browser hilang (peserta membuka aplikasi lain).", 2);
+});
+
+/* ==========================================================
+   EVENT LISTENERS
+========================================================== */
+$("verifyTokenBtn").onclick = async () => {
+  const token = $("token").value.trim();
+  const btn = $("verifyTokenBtn");
+  const errorMsg = $("tokenError");
+
+  if (!token) {
+    errorMsg.textContent = "Token tidak boleh kosong.";
+    return;
+  }
+  if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) {
+    errorMsg.textContent = "SCRIPT_URL belum disetting.";
+    return;
+  }
+
+  btn.textContent = "MEMVERIFIKASI...";
+  btn.disabled = true;
+  errorMsg.textContent = "";
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: "VERIFY_TOKEN", token: token })
+    });
+    
+    const result = await response.json();
+
+    if (result.status === "success") {
+      showScreen("infoScreen"); 
+    } else {
+      errorMsg.textContent = "Token tidak valid.";
+    }
+  } catch (err) {
+    errorMsg.textContent = "Terjadi kesalahan jaringan/server.";
+  } finally {
+    btn.textContent = "BERIKUTNYA";
+    btn.disabled = false;
+  }
+};
+
 $("startBtn").onclick=()=>{
-  const candidateId=$("candidateId").value.trim();
-  const token=$("token").value.trim();
-  $("loginError").textContent="";
-  if(!candidateId){
-    $("loginError").textContent="Please enter your Candidate ID.";
+  const nama=$("inputNama").value.trim();
+  const level=$("inputLevel").value;
+  const jabatan=$("inputJabatan").value.trim();
+
+  if(!nama || !level || !jabatan){
+    $("infoError").textContent="Harap lengkapi semua data diri.";
     return;
   }
-  if(token!==CONFIG.accessToken){
-    $("loginError").textContent="Invalid access token.";
-    return;
-  }
-  state.candidateId=candidateId;
-  state.startedAt=new Date().toISOString();
-  state.remaining=CONFIG.durationSeconds;
-  state.ended=false;
-  $("candidateDisplay").textContent="TES";
+
+  const uniqueId = nama.replace(/\s+/g, '').substring(0, 15).toUpperCase() + "-" + Math.floor(1000 + Math.random() * 9000);
+  
+  state.uid = uniqueId;
+  state.candidateData = { nama, level, jabatan };
+  state.ended = false;
+  state.answerSequence = []; 
+  
+  $("candidateDisplay").textContent = nama;
+
+  sendToSheets({
+    action: "INIT",
+    uid: state.uid,
+    nama: nama,
+    level: level,
+    jabatan: jabatan
+  });
+
+  state.isStarted = true;
+
   updateDesk();
   showScreen("assessment");
   showAssessmentView("desk");
   startTimer();
 };
 
-document.querySelectorAll(".channel").forEach(button=>{
-  button.onclick=()=>openChannel(button.dataset.channel);
-});
-
-$("backDeskFromInbox").onclick=()=>{
-  if(!state.ended)showAssessmentView("desk");
-};
-
-$("backInboxBtn").onclick=()=>{
-  if(!state.ended){
-    renderInbox();
-    showAssessmentView("inbox");
+$("endTestBtn").onclick=()=>{
+  if(confirm("Apakah Anda yakin ingin mengakhiri tes? Anda tidak dapat kembali mengubah jawaban.")){
+    endAssessment();
   }
 };
 
+document.querySelectorAll(".channel").forEach(button=>{
+  button.onclick=()=>openChannel(button.dataset.channel);
+});
+$("backDeskFromInbox").onclick=()=> { if(!state.ended)showAssessmentView("desk"); };
+$("backInboxBtn").onclick=()=> { if(!state.ended){ renderInbox(); showAssessmentView("inbox"); } };
 $("actionBtn").onclick=openResponse;
-
-$("cancelResponse").onclick=()=>{
-  if(!state.ended)showAssessmentView("detail");
-};
-
+$("cancelResponse").onclick=()=> { if(!state.ended)showAssessmentView("detail"); };
 $("submitResponse").onclick=submitResponse;
 
 window.addEventListener("beforeunload",event=>{
-  if(!state.ended && state.startedAt){
+  if(!state.ended && state.uid){
     event.preventDefault();
     event.returnValue="";
   }
