@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>In-Tray Prioritization Assessment</title>
+<title>In-Tray Prioritization Assessment - HRD Manager</title>
 <style>
 *{box-sizing:border-box}
 :root{
@@ -106,31 +106,17 @@ textarea{min-height:220px;resize:vertical}
 }
 
 .role-context h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
+  margin-top: 15px;
+  margin-bottom: 10px;
   color: #1a1d21;
   font-size: 16px;
   border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
-
-.role-context .info-grid {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 8px 15px;
-  margin-bottom: 15px;
-}
-
-.role-context .info-label {
-  font-weight: 700;
-  color: #5c6673;
-}
-
-.role-context ul {
-  margin-top: 5px;
-  padding-left: 20px;
-  margin-bottom: 15px;
-}
+.role-context h3:first-child { margin-top: 0; }
+.role-context p { margin-top: 5px; margin-bottom: 12px; }
+.role-context ul { margin-top: 5px; padding-left: 20px; margin-bottom: 15px; }
+.role-context li { margin-bottom: 6px; }
 
 .desk-label {
   font-size: 11px;
@@ -210,6 +196,20 @@ textarea{min-height:220px;resize:vertical}
 }
 .statusbox{margin:30px 0;padding:16px 20px;border-radius:10px;background:#f8f9fa;font-size:14px; border: 1px solid #e7eaec;}
 .statusbox strong{display:block;margin-bottom:6px; color: #1a1d21;}
+
+/* NEW: System Note Box */
+.sys-note {
+  margin: 30px 0 10px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  font-size: 13.5px;
+  color: #5c4b12;
+}
+.sys-note strong { color: #876800; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px;}
+.sys-note ul { margin: 0; padding-left: 20px;}
+
 .actionbar{display:flex;justify-content:space-between;gap:12px;margin-top:40px}
 
 /* ---------- MESSAGE DETAIL ---------- */
@@ -255,16 +255,6 @@ textarea{min-height:220px;resize:vertical}
   display:none;z-index:100; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   font-size: 14px; font-weight: 500;
 }
-
-@media(max-width:800px){
-  .channelgrid{grid-template-columns:1fr}
-  .desk{padding:40px 20px}
-  .paper{padding:30px 20px}
-  .card{padding:30px 20px}
-  .floating-end-btn{bottom: 20px; right: 20px;}
-  .role-context .info-grid {grid-template-columns: 1fr;}
-  .role-context .info-label {margin-top: 10px; margin-bottom: 2px;}
-}
 </style>
 </head>
 
@@ -289,27 +279,9 @@ textarea{min-height:220px;resize:vertical}
   <div class="card">
     <h1>DATA DIRI</h1>
     <p class="muted">Lengkapi profil Anda sebelum memulai simulasi.</p>
-    
-    <label class="field">
-      <span>NAMA LENGKAP</span>
-      <input id="inputNama" autocomplete="off" placeholder="Nama Lengkap">
-    </label>
-    
-    <label class="field">
-      <span>LEVEL JABATAN</span>
-      <select id="inputLevel">
-        <option value="">Pilih Level...</option>
-        <option value="Staff">Staff</option>
-        <option value="Supervisor">Supervisor</option>
-        <option value="Manager">Manager</option>
-      </select>
-    </label>
-
-    <label class="field">
-      <span>JABATAN SAAT INI</span>
-      <input id="inputJabatan" autocomplete="off" placeholder="Contoh: Marketing Executive">
-    </label>
-
+    <label class="field"><span>NAMA LENGKAP</span><input id="inputNama" autocomplete="off"></label>
+    <label class="field"><span>LEVEL JABATAN</span><select id="inputLevel"><option value="">Pilih...</option><option value="Staff">Staff</option><option value="Supervisor">Supervisor</option><option value="Manager">Manager</option></select></label>
+    <label class="field"><span>JABATAN SAAT INI</span><input id="inputJabatan" autocomplete="off"></label>
     <div id="infoError" class="error"></div>
     <button id="startBtn" class="primary" style="margin-top:10px;">MULAI ASSESMEN</button>
   </div>
@@ -343,30 +315,17 @@ textarea{min-height:220px;resize:vertical}
         <div class="desk-content-header">
           <h1>Your Desk</h1>
           <div class="role-context">
-            <h3>INFORMASI PERAN ANDA</h3>
-            <div class="info-grid">
-              <div class="info-label">Nama Peran</div>
-              <div>Wening Endah Sulistya</div>
-              <div class="info-label">Posisi</div>
-              <div>Sekretaris Eksekutif Direktur Proyek</div>
-              <div class="info-label">Industri</div>
-              <div>PT BANGUN JAYA, Konstruksi Jalan Raya (Area Kalimantan)</div>
-            </div>
-            
-            <div class="info-label" style="margin-top: 15px;">Tujuan Jabatan:</div>
-            <p style="margin-top:5px; margin-bottom:10px;">Mendukung Direktur Proyek dalam pengelolaan komunikasi, koordinasi operasional, serta pengambilan keputusan strategis terkait proyek pembangunan jalan raya, termasuk hubungan dengan klien, pemerintah daerah, dan stakeholder lainnya.</p>
+            <h3>PROFIL PERUSAHAAN</h3>
+            <p><strong>PT Cakra Konstruksi Nusantara (CKN)</strong> merupakan perusahaan konstruksi nasional yang menangani proyek pembangunan gedung komersial, kawasan industri, dan infrastruktur. Perusahaan memiliki sekitar 1.200 karyawan di kantor pusat dan lokasi proyek.</p>
+            <p>Perusahaan sedang berkembang pesat dan melakukan transformasi digital. Namun, menghadapi tantangan: kebutuhan tenaga kerja proyek yang mendesak, kepatuhan standar, adopsi teknologi, dan koordinasi antar cabang.</p>
 
-            <div class="info-label">Tanggung Jawab Utama:</div>
-            <ul>
-              <li>Mengelola komunikasi dengan klien (pemerintah, vendor, masyarakat).</li>
-              <li>Menyusun prioritas agenda Direktur.</li>
-              <li>Menangani keluhan stakeholder proyek.</li>
-              <li>Mengkoordinasikan informasi lintas divisi (teknik, operasional, legal).</li>
-              <li>Memberikan masukan administratif dan strategis kepada Direktur.</li>
-            </ul>
+            <h3>POSISI ANDA</h3>
+            <p>Anda baru saja ditunjuk sebagai <strong>HRD Manager</strong> PT Cakra Konstruksi Nusantara. Anda melapor kepada HR Director dan memiliki empat bawahan langsung (HRBP, Recruitment, L&D, dan HR Operations Supervisor).</p>
+            <p><strong>Tanggung Jawab Utama:</strong> Merencanakan kebutuhan manpower, memastikan proses recruitment efektif, mengembangkan kompetensi karyawan, mendorong teknologi/data, serta mengelola risiko SDM.</p>
 
-            <div class="info-label">Instruksi:</div>
-            <p style="margin-top:5px; margin-bottom:0;">Anda adalah Sekretaris Eksekutif yang baru menjabat selama 2 minggu. Hari ini tanggal 22 April 2026, pukul 08.30, Anda menerima beberapa pesan, meliputi email, memo, dan percakapan WA. Atasan Anda, Pak Maryono, Direktur Proyek, sedang menjalani perjalanan dinas ke luar pulau selama empat hari. Sehingga Anda harus memberikan respon terhadap pesan-pesan tersebut sesuai dengan kapasitas Anda sebagai seorang Sekretaris Eksekutif.</p>
+            <h3>SITUASI</h3>
+            <p>Hari ini adalah hari Senin. Anda tiba di kantor pukul 08.00. HR Director sedang melakukan kunjungan proyek di luar kota. Pada pukul 14.00, Anda harus menghadiri rapat dengan jajaran Direksi.</p>
+            <p>Ketika membuka laptop dan telepon, Anda menemukan beberapa masalah yang membutuhkan keputusan Anda. <strong>Tugas:</strong> Responlah beberapa isu yang ada sesuai dengan jabatan Anda.</p>
           </div>
           <div class="desk-label">INCOMING INFORMATION</div>
         </div>
@@ -375,12 +334,7 @@ textarea{min-height:220px;resize:vertical}
           <button class="channel" data-channel="email">
             <span id="emailBadge" class="badge"></span>
             <div class="icon">
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 20C12 17.7909 13.7909 16 16 16H48C50.2091 16 52 17.7909 52 20V44C52 46.2091 50.2091 48 48 48H16C13.7909 48 12 46.2091 12 44V20Z" fill="#A7B7E6"/>
-                  <path d="M12 24L32 38L52 24" stroke="#879BD6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="32" cy="28" r="9" fill="white"/>
-                  <text x="32" y="32" font-family="Arial" font-size="12" font-weight="bold" fill="#314B9A" text-anchor="middle">@</text>
-              </svg>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M12 20C12 17.7909 13.7909 16 16 16H48C50.2091 16 52 17.7909 52 20V44C52 46.2091 50.2091 48 48 48H16C13.7909 48 12 46.2091 12 44V20Z" fill="#A7B7E6"/><path d="M12 24L32 38L52 24" stroke="#879BD6" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="28" r="9" fill="white"/><text x="32" y="32" font-family="Arial" font-size="12" font-weight="bold" fill="#314B9A" text-anchor="middle">@</text></svg>
             </div>
             <h2>Email</h2>
             <div id="emailCount" class="count"></div>
@@ -389,12 +343,7 @@ textarea{min-height:220px;resize:vertical}
           <button class="channel" data-channel="memo">
             <span id="memoBadge" class="badge"></span>
             <div class="icon">
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 10H38L50 22V52C50 54.2091 48.2091 56 46 56H18C15.7909 56 14 54.2091 14 52V14C14 11.7909 15.7909 10 18 10Z" fill="#F4D67B"/>
-                  <path d="M38 10V22H50" fill="#E0BC50"/>
-                  <rect x="22" y="32" width="20" height="3" rx="1.5" fill="#C99F2A"/>
-                  <rect x="22" y="40" width="12" height="3" rx="1.5" fill="#C99F2A"/>
-              </svg>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M18 10H38L50 22V52C50 54.2091 48.2091 56 46 56H18C15.7909 56 14 54.2091 14 52V14C14 11.7909 15.7909 10 18 10Z" fill="#F4D67B"/><path d="M38 10V22H50" fill="#E0BC50"/><rect x="22" y="32" width="20" height="3" rx="1.5" fill="#C99F2A"/><rect x="22" y="40" width="12" height="3" rx="1.5" fill="#C99F2A"/></svg>
             </div>
             <h2>Memos</h2>
             <div id="memoCount" class="count"></div>
@@ -403,12 +352,7 @@ textarea{min-height:220px;resize:vertical}
           <button class="channel" data-channel="message">
             <span id="messageBadge" class="badge"></span>
             <div class="icon">
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="14" y="20" width="26" height="18" rx="5" fill="#7FD5A4"/>
-                  <path d="M14 34V42L22 37" fill="#7FD5A4"/>
-                  <rect x="24" y="28" width="26" height="18" rx="5" fill="#5EBC88"/>
-                  <path d="M50 42V50L42 45" fill="#5EBC88"/>
-              </svg>
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="14" y="20" width="26" height="18" rx="5" fill="#7FD5A4"/><path d="M14 34V42L22 37" fill="#7FD5A4"/><rect x="24" y="28" width="26" height="18" rx="5" fill="#5EBC88"/><path d="M50 42V50L42 45" fill="#5EBC88"/></svg>
             </div>
             <h2>Messages</h2>
             <div id="messageCount" class="count"></div>
@@ -445,14 +389,10 @@ textarea{min-height:220px;resize:vertical}
     </main>
 
     <main id="responseView" class="main" style="display:none; padding: 30px;">
-      <div class="card response-card">
+      <div class="paper">
         <h1 id="responseTitle" style="font-size: 24px; margin-bottom: 10px;"></h1>
-        <p class="muted" style="margin-bottom: 25px;">
-          Tuliskan respons Anda. Jelaskan prioritas, tindakan langsung, dan tindak lanjut yang diperlukan.
-        </p>
-
+        <p class="muted" style="margin-bottom: 25px;">Tuliskan respons Anda. Jelaskan prioritas, tindakan langsung, dan tindak lanjut yang diperlukan.</p>
         <textarea id="responseText" placeholder="Ketik respons Anda di sini..."></textarea>
-
         <div class="actionbar">
           <button id="cancelResponse" class="secondary">← KEMBALI</button>
           <button id="submitResponse" class="primary">SUBMIT RESPONSE</button>
@@ -467,11 +407,7 @@ textarea{min-height:220px;resize:vertical}
   <div class="card ended">
     <div class="big">🎉</div>
     <h1>TERIMA KASIH</h1>
-    <p class="muted">
-      Asesmen Anda telah selesai. Semua data diri dan respons jawaban telah berhasil disimpan ke dalam sistem kami.
-      <br><br>
-      Anda sudah dapat menutup tab atau halaman ini.
-    </p>
+    <p class="muted">Asesmen Anda telah selesai. Semua data diri dan respons jawaban telah berhasil disimpan.</p>
   </div>
 </section>
 
@@ -481,9 +417,7 @@ textarea{min-height:220px;resize:vertical}
 /* ==========================================================
    KONFIGURASI
 ========================================================== */
-const CONFIG = {
-  durationSeconds: 45 * 60
-};
+const CONFIG = { durationSeconds: 60 * 60 };
 
 // GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT-MU
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTVhIkV_yGJfjRtVJZWkrQwsgXAKCrGuOUDobomP2Y7UtDyI8e6VhonPm-T0HSJ9M/exec"; 
@@ -491,234 +425,131 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTVhIkV_yGJfjRtVJZW
 const inbox = {
   email: [
     {
-      id:"email-01",
-      from:"Perwakilan Warga Desa Sitepu",
-      subject:"Keluhan Warga Desa Sitepu Terkait Dampak Debu Proyek Jalan",
-      time:"08:15",
+      id:"intray-01",
+      from:"Arief – Project Director",
+      subject:"Urgent – Site Manager Proyek Sentra Industrial Park",
+      time:"08:05",
       status:"unread",
-      preview:"Keluhan terkait dampak aktivitas pembangunan jalan yang menimbulkan debu berlebihan...",
+      preview:"Saya ingin minta bantuan untuk mempercepat proses kandidat Site Manager, Dimas Pratama...",
       body:`
-        <p>Yth. Manajemen PT Bangun Jaya,</p>
-        <p>Kami selaku perwakilan warga Desa Sitepu ingin menyampaikan keluhan terkait dampak aktivitas pembangunan jalan yang saat ini sedang berlangsung di wilayah kami.</p>
-        <p>Sejak beberapa minggu terakhir, aktivitas proyek telah menimbulkan debu berlebihan yang sangat mengganggu kenyamanan dan kesehatan warga. Beberapa warga, khususnya anak-anak dan lansia, mulai mengalami gangguan pernapasan. Hingga saat ini, kami belum melihat adanya langkah konkret dari pihak perusahaan untuk mengurangi dampak tersebut.</p>
-        <p>Kami sangat berharap permasalahan ini dapat segera ditangani secara serius. Apabila tidak ada tindak lanjut dalam waktu dekat, kami terpaksa mempertimbangkan untuk menyampaikan hal ini kepada pihak terkait maupun media.</p>
-        <p>Demikian yang dapat kami sampaikan. Kami berharap dapat segera menerima respon dan solusi dari PT Bangun Jaya.</p>
-        <br>
-        <p>Hormat kami,</p>
-        <p>Perwakilan Warga Desa Sitepu</p>
+        <p>Pagi,</p>
+        <p>Saya ingin minta bantuan untuk mempercepat proses kandidat Site Manager, Dimas Pratama.</p>
+        <p>Saya pernah bekerja dengan Dimas di proyek sebelumnya dan menurut saya dia sangat kuat di lapangan. Kita juga sedang terdesak karena Site Manager harus mulai bekerja maksimal dua minggu lagi.</p>
+        <p>Saya lihat dari HR bahwa hasil assessment Dimas sedikit di bawah standar pada problem solving. Menurut saya itu tidak terlalu menjadi masalah karena pengalaman lapangannya sudah lebih dari 12 tahun.</p>
+        <p>Kalau mengikuti semua proses normal, saya khawatir kita kehilangan kandidat ini. Dimas juga bilang sedang mempertimbangkan tawaran dari perusahaan lain.</p>
+        <p>Kalau memungkinkan, saya ingin kita langsung masuk ke tahap offering minggu ini. Semingu yang lalu saya mengobrol dengan Pak Andri, HR Director, di sela-sela istirahat makan siang saat kunjungan beliau ke site. Beliau sudah bilang oke untuk diurus lebih lanjut.</p>
+        <p>Thanks,<br>Arief</p>
+
+        <div class="sys-note">
+          <strong>⚙️ INFORMASI DALAM SISTEM HR:</strong>
+          <ul>
+            <li>Kandidat (Dimas) memiliki pengalaman 12 tahun di bidang konstruksi dan pernah menangani tiga proyek besar. Namun, hasil assessment problem solving berada di bawah cut-off perusahaan.</li>
+            <li>Terdapat dua kandidat lain yang memenuhi cut-off dan memiliki pengalaman 8–10 tahun, tetapi belum diwawancarai oleh Project Director.</li>
+          </ul>
+        </div>
       `
     },
     {
-      id:"email-02",
-      from:"Pemerintah Kota Singkawang",
-      subject:"Permohonan Rapat Koordinasi Terkait Progres dan Keterlambatan Proyek Jalan",
-      time:"08:25",
+      id:"intray-02",
+      from:"Nadia – HRIS Project Lead",
+      subject:"Go-Live AI Candidate Screening",
+      time:"08:12",
       status:"unread",
-      preview:"Permohonan rapat koordinasi membahas progres dan isu keterlambatan proyek...",
+      preview:"Vendor HRIS telah menyelesaikan modul AI Candidate Screening yang akan digunakan...",
       body:`
-        <p>Yth. Manajemen PT Bangun Jaya,</p>
-        <p>Sehubungan dengan pelaksanaan proyek pembangunan jalan di Wilayah Singkawang, kami dari Pemerintah Kota bermaksud untuk mengadakan rapat koordinasi dalam waktu dekat guna membahas beberapa hal penting, antara lain:</p>
-        <ul>
-          <li>Progres terkini pelaksanaan proyek</li>
-          <li>Klarifikasi terkait isu keterlambatan yang terjadi di lapangan</li>
-        </ul>
-        <p>Rapat ini kami nilai penting untuk memastikan keselarasan informasi serta langkah-langkah strategis yang perlu diambil ke depan. Oleh karena itu, kami mengharapkan kehadiran Direktur Proyek.</p>
-        <p>Kami mengusulkan pelaksanaan rapat pada:</p>
-        <table style="margin-bottom:15px; margin-left: 20px;">
-          <tr><td style="padding-right: 15px; font-weight: bold;">Hari/Tanggal</td><td>: 24 April 2026</td></tr>
-          <tr><td style="padding-right: 15px; font-weight: bold;">Waktu</td><td>: 13.00-15.00 waktu setempat</td></tr>
-          <tr><td style="padding-right: 15px; font-weight: bold;">Tempat</td><td>: Kantor Pemerintah Kota Singkawang</td></tr>
-        </table>
-        <p>Demikian kami sampaikan. Atas perhatian dan kerja samanya, kami ucapkan terima kasih.</p>
+        <p>Selamat pagi, Pak.</p>
+        <p>Ingin mengabarkan bahwa Vendor HRIS telah menyelesaikan modul AI Candidate Screening yang akan digunakan untuk membantu recruitment proyek. Sistem ini dapat membaca CV dan memberikan ranking kandidat berdasarkan kecocokan dengan job description.</p>
+        <p>Dalam pilot minggu lalu, screening sekitar 600 CV yang biasanya membutuhkan beberapa hari dapat diselesaikan dalam waktu kurang dari satu jam. Vendor menyarankan agar mulai minggu depan hanya kandidat dengan ranking tertinggi yang diteruskan kepada recruiter.</p>
+        <p>Namun, tim Recruitment menemukan beberapa hal yang masih perlu diperhatikan. Beberapa kandidat dengan pengalaman proyek yang menurut recruiter relevan mendapatkan ranking cukup rendah. Tim juga belum sepenuhnya memahami faktor apa yang menyebabkan kandidat memperoleh skor tinggi atau rendah.</p>
+        <p>Vendor menyampaikan bahwa model serupa sudah digunakan oleh beberapa perusahaan lain. Sementara itu, kebutuhan recruitment untuk proyek baru cukup mendesak. Kita diperkirakan akan menerima lebih dari 2.000 aplikasi dalam satu bulan ke depan.</p>
+        <p>Mohon arahan apakah kita tetap go-live minggu depan sesuai rencana. Jika iya, apa yang harus kita persiapkan. Terima kasih atas arahannya.</p>
         <br>
-        <p>Hormat kami,</p>
-        <p>Pemerintah Kota Singkawang</p>
+        <p>Hormat saya,</p>
+        <p>Nadia<br>HRIS Project</p>
       `
     }
   ],
   memo: [
     {
-      id:"memo-01",
-      from:"Manajer Teknik",
-      subject:"Ketidaksesuaian Pelaksanaan dengan Spesifikasi Teknis",
-      time:"08:05",
+      id:"intray-03",
+      from:"Learning & Development Supervisor",
+      subject:"Evaluasi Digital Project Leadership Program",
+      time:"08:20",
       status:"unread",
-      preview:"Penyampaian deviasi pelaksanaan pekerjaan dengan spesifikasi teknis...",
+      preview:"Mau update terkait program Digital Project Leadership untuk Site Manager dan Project Manager...",
       body:`
         <div class="memo-header">
           <strong>MEMO INTERNAL</strong>
           <table>
-            <tr><td>Kepada</td><td>: Direktur Proyek</td></tr>
-            <tr><td>Dari</td><td>: Manajer Teknik</td></tr>
-            <tr><td>Tanggal</td><td>: 22 April 2026</td></tr>
-            <tr><td>Perihal</td><td>: Ketidaksesuaian Pelaksanaan dengan Spesifikasi Teknis</td></tr>
+            <tr><td>Kepada</td><td>: HRD Manager</td></tr>
+            <tr><td>Dari</td><td>: Learning & Development Supervisor</td></tr>
+            <tr><td>Subject</td><td>: Evaluasi Digital Project Leadership Program</td></tr>
           </table>
         </div>
-        <p>Yth. Bapak Maryono,</p>
-        <p>Melalui memo ini, kami ingin menyampaikan perhatian terkait pelaksanaan pekerjaan di lapangan oleh tim operasional yang dalam beberapa kesempatan tidak sepenuhnya mengikuti spesifikasi teknis yang telah ditetapkan.</p>
-        <p>Beberapa temuan di lapangan menunjukkan adanya deviasi dalam proses pengerjaan, khususnya pada [contoh: metode pemadatan, ketebalan lapisan, atau penggunaan material]. Apabila kondisi ini terus berlanjut, kami khawatir hal tersebut dapat berdampak pada penurunan kualitas hasil pekerjaan, serta berpotensi menimbulkan risiko pada tahap evaluasi maupun pemeliharaan di kemudian hari.</p>
-        <p>Kami memahami adanya tekanan target waktu di lapangan. Namun demikian, kepatuhan terhadap standar teknis tetap menjadi prioritas utama untuk memastikan keberhasilan proyek secara keseluruhan.</p>
-        <p>Kami berharap hal ini dapat segera ditindaklanjuti demi menjaga kualitas dan keberlanjutan proyek.</p>
-        <p>Demikian disampaikan. Atas perhatian dan arahannya, kami ucapkan terima kasih.</p>
+        <p>Mau update terkait program Digital Project Leadership untuk Site Manager dan Project Manager yang sudah berjalan sekitar tiga bulan. Program ini awalnya kita buat untuk membantu para pimpinan proyek lebih terbiasa menggunakan dashboard proyek, monitoring berbasis data, koordinasi digital, dan sistem perusahaan dalam pekerjaan sehari-hari.</p>
+        <p>Dari total 75 peserta, sejauh ini baru sekitar 58% yang menyelesaikan seluruh modul. Dari beberapa feedback yang kami terima, ada peserta yang merasa materinya terlalu teknis dan kurang sesuai dengan kebutuhan mereka di lapangan. Ada juga yang sebenarnya merasa programnya bermanfaat, tetapi kesulitan mengikuti jadwal karena aktivitas proyek cukup padat.</p>
+        <p>Yang menarik, dari data sementara, peserta yang sudah menyelesaikan program terlihat lebih aktif menggunakan dashboard proyek dibandingkan sebelum mengikuti program. Tapi kami belum tahu apakah perubahan ini memang karena training atau atau hal lain.</p>
+        <p>Kami sudah diskusi dengan vendor. Menurut mereka, materi yang diberikan sudah sesuai dengan perkembangan digitalisasi industri konstruksi dan sebaiknya program tetap berjalan sesuai desain awal. Mereka juga mengingatkan bahwa terlalu banyak perubahan di tengah program bisa membuat hasil antar-batch sulit dibandingkan.</p>
+        <p>Kontrak dengan vendor masih tersisa sembilan bulan dan sebagian besar biaya program sudah dibayarkan. Dalam dua bulan ke depan juga ada 40 Site Manager dan Project Manager baru yang rencananya akan masuk ke batch berikutnya.</p>
+        <p>Kami perlu menentukan langkah selanjutnya sebelum jadwal batch baru dibuat minggu depan.</p>
+        <p>Menurut Bapak/Ibu, bagaimana sebaiknya kita tindak lanjuti program ini?</p>
         <br>
-        <p>Hormat kami,</p>
-        <p>Ir. Rudi Subroto,<br>Manajer Teknik</p>
-      `
-    },
-    {
-      id:"memo-02",
-      from:"Divisi Humas",
-      subject:"URGENT – Pemberitaan Negatif Terkait Proyek Jalan Kalimantan",
-      time:"08:30",
-      status:"unread",
-      preview:"Telah muncul pemberitaan di salah satu media online dengan judul proyek jalan diduga merusak...",
-      body:`
-        <div class="memo-header">
-          <strong>MEMO INTERNAL</strong>
-          <table>
-            <tr><td>Kepada</td><td>: Sekretaris Eksekutif</td></tr>
-            <tr><td>Dari</td><td>: Divisi Humas</td></tr>
-            <tr><td>Tanggal</td><td>: 22 April 2026</td></tr>
-            <tr><td>Perihal</td><td>: URGENT – Pemberitaan Negatif Terkait Proyek Jalan Kalimantan</td></tr>
-          </table>
-        </div>
-        <p>Yth. Mbak Wening,</p>
-        <p>Selamat pagi.</p>
-        <p>Kami ingin menginformasikan bahwa pada pagi ini telah muncul pemberitaan di salah satu media online dengan judul: <strong>“Proyek Jalan Kalimantan Diduga Merusak Lingkungan dan Merugikan Warga Lokal.”</strong></p>
-        <p>Berikut petikan beritanya:</p>
-        <blockquote>
-          Kalimantan Barat – Proyek pembangunan jalan yang dikerjakan oleh PT Bangun Jaya di wilayah Kalimantan Barat menuai keluhan dari masyarakat setempat. Sejumlah warga Desa Sitepu mengungkapkan bahwa aktivitas proyek telah menyebabkan peningkatan debu yang signifikan, serta diduga berdampak pada kesehatan warga, khususnya anak-anak dan lansia.<br><br>
-          Selain itu, warga juga menyoroti dugaan kerusakan lingkungan di sekitar area proyek, termasuk berkurangnya kualitas air dan terganggunya aktivitas pertanian. Hingga saat ini, masyarakat mengaku belum melihat adanya langkah konkret dari pihak perusahaan untuk mengatasi dampak tersebut.<br><br>
-          “Kami tidak menolak pembangunan, tetapi kami ingin perusahaan juga memperhatikan kondisi kami. Sampai sekarang belum ada solusi yang jelas,” ujar salah satu perwakilan warga.<br><br>
-          Pihak pemerintah daerah menyatakan akan segera melakukan peninjauan lapangan untuk memastikan kebenaran informasi tersebut. Sementara itu, hingga berita ini diturunkan, pihak PT Bangun Jaya belum memberikan pernyataan resmi terkait keluhan warga.
-        </blockquote>
-        <p>Pemberitaan tersebut berpotensi menimbulkan dampak reputasi yang signifikan bagi perusahaan, terutama jika tidak segera direspons secara tepat dan terkoordinasi. Hingga saat ini, kami memahami bahwa Bapak Direktur Proyek kemungkinan belum menerima informasi terkait isu ini.</p>
-        <p>Sehubungan dengan hal tersebut, kami menyarankan agar:</p>
-        <ol>
-          <li>Informasi ini segera dilaporkan kepada Direktur Proyek melalui memo internal sebagai bentuk eskalasi resmi.</li>
-          <li>Disertakan ringkasan isu utama dalam pemberitaan, potensi risiko, serta opsi langkah awal penanganan (misalnya klarifikasi, investigasi internal, atau penyiapan pernyataan resmi).</li>
-        </ol>
-        <p>Demikian kami sampaikan. Terima kasih atas perhatian dan koordinasinya.</p>
-        <br>
-        <p>Hormat kami,</p>
-        <p>Dennis Marpaung<br>Staf Humas<br>PT Bangun Jaya</p>
+        <p>Thanks, Komandan!</p>
       `
     }
   ],
   message: [
     {
-      id:"message-01",
-      from:"PT ASPHALINDO NUSA",
-      subject:"Tunggakan Pembayaran 3 Minggu",
-      time:"08:12",
+      id:"intray-04",
+      from:"Rina – Recruitment Supervisor",
+      subject:"Kandidat Dimas (Site Manager)",
+      time:"10:17",
       status:"unread",
-      preview:"Kami ingin menindaklanjuti terkait pembayaran invoice yang sudah tertunda...",
+      preview:"Pak, izin konfirmasi sebentar soal Dimas, kandidat Site Manager Sentra Industrial Park...",
       body:`
         <div class="chat">
-          <div class="bubble them">
-            Selamat pagi Ibu. Kami ingin menindaklanjuti terkait pembayaran invoice yang sudah tertunda selama 3 minggu. Sampai saat ini kami belum menerima kejelasan maupun konfirmasi pembayaran dari pihak PT Bangun Jaya.
-            <small>PT ASPHALINDO NUSA · 08:12</small>
-          </div>
-          <div class="bubble them">
-            Kami perlu menegaskan bahwa kondisi ini sudah sangat mengganggu operasional kami, terutama dalam pengadaan dan distribusi material untuk proyek Anda.
-            <small>PT ASPHALINDO NUSA · 08:14</small>
-          </div>
-          <div class="bubble them">
-            Jika dalam waktu 2 hari ke depan tidak ada penyelesaian pembayaran, kami tidak memiliki pilihan selain menghentikan sementara pengiriman aspal ke lokasi proyek.
-            <small>PT ASPHALINDO NUSA · 08:16</small>
-          </div>
-          <div class="bubble them">
-            Kami harap hal ini bisa menjadi perhatian serius, karena dampaknya tentu akan langsung memengaruhi progres proyek di lapangan.
-            <small>PT ASPHALINDO NUSA · 08:17</small>
-          </div>
+          <div class="bubble them">Pak, izin konfirmasi sebentar soal Dimas, kandidat Site Manager Sentra Industrial Park<small>Rina | 10:17</small></div>
+          <div class="bubble you">Iya Rin, kenapa?<small>Anda | 10:18</small></div>
+          <div class="bubble them">Tadi Pak Arief telepon saya langsung. Beliau minta Dimas segera diproses ke offering karena katanya proyek sudah urgent banget butuh Site Manager.<small>Rina | 10:18</small></div>
+          <div class="bubble them">Masalahnya hasil assessment Dimas kan di bawah cut-off kita.<small>Rina | 10:19</small></div>
+          <div class="bubble them">Saya sudah sampaikan ke Pak Arief, tapi beliau bilang jangan terlalu terpaku sama hasil assessment karena beliau pernah kerja bareng Dimas dan yakin Dimas bagus di lapangan.<small>Rina | 10:20</small></div>
+          <div class="bubble them">Beliau minta saya ubah status Dimas di HRIS dari “Below Standard” jadi “Recommended” supaya prosesnya bisa lanjut. Saya bilang saya nggak punya kewenangan untuk mengubah hasilnya.<small>Rina | 10:21</small></div>
+          <div class="bubble them">Terus Pak Arief bilang bisa nggak statusnya diubah. Katanya beliau siap bertanggung jawab karena nanti Dimas juga akan kerja langsung di bawah beliau.<small>Rina | 10:23</small></div>
+          <div class="bubble them">Saya belum ubah apa-apa Pak. Tapi Pak Arief minta kepastian hari ini karena Dimas katanya juga lagi proses di perusahaan lain.<small>Rina | 10:26</small></div>
+          <div class="bubble them">Sebaiknya saya bagaimana ya Pak?<small>Rina | 10:28</small></div>
         </div>
       `
     }
   ]
 };
 
-let state = {
-  uid: "",
-  candidateData: {},
-  currentChannel: null,
-  currentItem: null,
-  remaining: CONFIG.durationSeconds,
-  timerId: null,
-  ended: false,
-  isStarted: false,
-  answerSequence: []
-};
-
+let state = { uid: "", candidateData: {}, currentChannel: null, currentItem: null, remaining: CONFIG.durationSeconds, timerId: null, ended: false, isStarted: false, answerSequence: [] };
 const $ = id => document.getElementById(id);
 const channelNames = { email:"Email Inbox", memo:"Memo Tray", message:"Messages" };
 
-function showScreen(id){
-  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
-  $(id).classList.add("active");
-}
-
-function showAssessmentView(view){
-  ["desk","inbox","detail","response"].forEach(v=>{
-    const el=$(v+"View");
-    if(el) el.style.display=(v===view)?"":"none";
-  });
-}
-
-function formatTime(seconds){
-  return String(Math.floor(seconds/60)).padStart(2,"0") +":"+String(seconds%60).padStart(2,"0");
-}
-
-function updateTimer(){
-  $("timer").textContent=formatTime(state.remaining);
-  $("timer").classList.toggle("warning",state.remaining<=300);
-}
-
-function startTimer(){
-  clearInterval(state.timerId);
-  updateTimer();
-  state.timerId=setInterval(()=>{
-    if(state.ended)return;
-    state.remaining--;
-    updateTimer();
-    if(state.remaining<=0){
-      state.remaining=0;
-      endAssessment();
-    }
-  },1000);
-}
-
-function sendToSheets(payload) {
-  if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) return;
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
-  }).catch(err => console.error("Error saving data:", err));
-}
-
-function countUnread(channel){ return inbox[channel].filter(x=>x.status==="unread").length; }
+function showScreen(id){ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active")); $(id).classList.add("active"); }
+function showAssessmentView(view){ ["desk","inbox","detail","response"].forEach(v=>{ const el=$(v+"View"); if(el) el.style.display=(v===view)?"":"none"; }); }
+function formatTime(s){ return String(Math.floor(s/60)).padStart(2,"0") +":"+String(s%60).padStart(2,"0"); }
+function updateTimer(){ $("timer").textContent=formatTime(state.remaining); $("timer").classList.toggle("warning",state.remaining<=300); }
+function startTimer(){ clearInterval(state.timerId); updateTimer(); state.timerId=setInterval(()=>{ if(state.ended)return; state.remaining--; updateTimer(); if(state.remaining<=0){ state.remaining=0; endAssessment(); } },1000); }
+function sendToSheets(payload) { if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) return; fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).catch(e => console.error(e)); }
+function countUnread(c){ return inbox[c].filter(x=>x.status==="unread").length; }
 
 function updateDesk(){
-  for(const channel of Object.keys(inbox)){
-    const total=inbox[channel].length;
-    const unread=countUnread(channel);
-    $(channel+"Count").textContent= `${total} items - ${unread} unread`;
-    const badge=$(channel+"Badge");
-    if(unread){
-      badge.textContent=unread+" UNREAD";
-      badge.className="badge show";
-    }else{
-      badge.textContent="";
-      badge.className="badge";
-    }
+  for(const c of Object.keys(inbox)){
+    const unread=countUnread(c);
+    $(c+"Count").textContent= `${inbox[c].length} items - ${unread} unread`;
+    const badge=$(c+"Badge");
+    if(unread){ badge.textContent=unread+" UNREAD"; badge.className="badge show"; }
+    else{ badge.textContent=""; badge.className="badge"; }
   }
 }
 
-function openChannel(channel){
+function openChannel(c){
   if(state.ended)return;
-  state.currentChannel=channel;
-  $("inboxTitle").textContent=channelNames[channel];
-  $("inboxSubtitle").textContent=`${inbox[channel].length} incoming item(s)`;
+  state.currentChannel=c;
+  $("inboxTitle").textContent=channelNames[c];
+  $("inboxSubtitle").textContent=`${inbox[c].length} incoming item(s)`;
   renderInbox();
   showAssessmentView("inbox");
 }
@@ -727,23 +558,14 @@ function renderInbox(){
   const list=$("itemList");
   list.innerHTML="";
   inbox[state.currentChannel].forEach(item=>{
-    const button=document.createElement("button");
-    button.className="item";
-    button.innerHTML=`
-      <span class="dot ${item.status}"></span>
-      <span>
-        <div class="itemtitle">${escapeHtml(item.from)} — ${escapeHtml(item.subject)}</div>
-        <div class="preview">${escapeHtml(item.preview)}</div>
-        <div class="state ${item.status}">${labelStatus(item.status)}</div>
-      </span>
-      <span class="time">${escapeHtml(item.time)}</span>
-    `;
-    button.onclick=()=>openItem(item.id);
-    list.appendChild(button);
+    const btn=document.createElement("button"); btn.className="item";
+    btn.innerHTML=`<span class="dot ${item.status}"></span><span><div class="itemtitle">${escapeHtml(item.from)} — ${escapeHtml(item.subject)}</div><div class="preview">${escapeHtml(item.preview)}</div><div class="state ${item.status}">${labelStatus(item.status)}</div></span><span class="time">${escapeHtml(item.time)}</span>`;
+    btn.onclick=()=>openItem(item.id);
+    list.appendChild(btn);
   });
 }
 
-function labelStatus(status){ return { unread:"UNREAD", read:"READ", responded:"RESPONDED" }[status]; }
+function labelStatus(s){ return { unread:"UNREAD", read:"READ", responded:"RESPONDED" }[s]; }
 function getCurrentItem(){ return inbox[state.currentChannel].find(x=>x.id===state.currentItem); }
 
 function openItem(id){
@@ -752,18 +574,11 @@ function openItem(id){
   const item=getCurrentItem();
   if(item.status==="unread") item.status="read";
   $("detailTitle").textContent=item.subject;
-  
-  let metaHtml = `<strong>FROM:</strong> ${escapeHtml(item.from)}<br>`;
-  
-  // Custom format memo meta
-  if (state.currentChannel !== 'memo') {
-    metaHtml += `<strong>TIME:</strong> ${escapeHtml(item.time)}<br>`;
-  }
-  metaHtml += `<strong>CHANNEL:</strong> ${escapeHtml(channelNames[state.currentChannel])}`;
-  
-  $("detailMeta").innerHTML = metaHtml;
+  let meta = `<strong>FROM:</strong> ${escapeHtml(item.from)}<br>`;
+  if (state.currentChannel !== 'memo') meta += `<strong>TIME:</strong> ${escapeHtml(item.time)}<br>`;
+  meta += `<strong>CHANNEL:</strong> ${escapeHtml(channelNames[state.currentChannel])}`;
+  $("detailMeta").innerHTML = meta;
   $("detailBody").innerHTML=item.body;
-  
   renderDetailState();
   updateDesk();
   showAssessmentView("detail");
@@ -773,211 +588,72 @@ function renderDetailState(){
   const item=getCurrentItem();
   $("detailState").innerHTML= `<strong>${labelStatus(item.status)}</strong> ${stateMessage(item.status)}`;
   const btn=$("actionBtn");
-  
-  if(item.status==="read" || item.status==="responded"){ 
-    btn.disabled=false;
-    btn.textContent = item.status === "responded" ? "EDIT RESPONSE" : "RESPOND";
-    btn.style.display=""; 
-  } else { 
-    btn.style.display="none"; 
-  }
+  if(item.status==="read" || item.status==="responded"){ btn.disabled=false; btn.textContent = item.status === "responded" ? "EDIT RESPONSE" : "RESPOND"; btn.style.display=""; } 
+  else { btn.style.display="none"; }
 }
 
-function stateMessage(status){
-  return { 
-    unread: "This item has not yet been reviewed.", 
-    read: "You have opened this item. You can now submit a response.", 
-    responded: "A response has been recorded for this item. You can edit your response if needed." 
-  }[status];
-}
-
-function openResponse(){
-  if(state.ended)return;
-  const item=getCurrentItem();
-  if(item.status==="unread")return; 
-  
-  $("responseTitle").textContent= (item.status==="responded" ? "Edit Response — " : "Respond — ") + item.subject;
-  $("responseText").value=item.answer||"";
-  showAssessmentView("response");
-}
+function stateMessage(s){ return { unread: "This item has not yet been reviewed.", read: "You have opened this item. You can now submit a response.", responded: "A response has been recorded for this item. You can edit your response if needed." }[s]; }
+function openResponse(){ if(state.ended)return; const item=getCurrentItem(); if(item.status==="unread")return; $("responseTitle").textContent= (item.status==="responded" ? "Edit Response — " : "Respond — ") + item.subject; $("responseText").value=item.answer||""; showAssessmentView("response"); }
 
 function submitResponse(){
   if(state.ended)return;
-  const item=getCurrentItem();
-  const answer=$("responseText").value.trim();
-  if(!answer){ showToast("Tuliskan respon terlebih dahulu."); return; }
-  
-  item.answer=answer;
-  item.status="responded";
-
-  if (!state.answerSequence.includes(item.id)) {
-    state.answerSequence.push(item.id);
-  }
-
-  sendToSheets({
-    action: "UPDATE_ANSWER",
-    uid: state.uid,
-    itemId: item.id,
-    answer: answer,
-    sequence: state.answerSequence.join(" -> ")
-  });
-
-  updateDesk();
-  renderInbox();
-  showToast("Jawaban tersimpan.");
-  showAssessmentView("inbox");
+  const item=getCurrentItem(); const ans=$("responseText").value.trim();
+  if(!ans){ showToast("Tuliskan respon terlebih dahulu."); return; }
+  item.answer=ans; item.status="responded";
+  if (!state.answerSequence.includes(item.id)) state.answerSequence.push(item.id);
+  sendToSheets({ action: "UPDATE_ANSWER", uid: state.uid, itemId: item.id, answer: ans, sequence: state.answerSequence.join(" -> ") });
+  updateDesk(); renderInbox(); showToast("Jawaban tersimpan."); showAssessmentView("inbox");
 }
 
 function endAssessment(){
-  if(state.ended)return;
-  state.ended=true;
-  clearInterval(state.timerId);
-  
-  sendToSheets({
-    action: "END_TEST",
-    uid: state.uid,
-    remainingSeconds: state.remaining
-  });
-
+  if(state.ended)return; state.ended=true; clearInterval(state.timerId);
+  sendToSheets({ action: "END_TEST", uid: state.uid, remainingSeconds: state.remaining });
   showScreen("endedScreen");
 }
 
-function showToast(message){
-  const toast=$("toast");
-  toast.textContent=message;
-  toast.style.display="block";
-  setTimeout(()=>toast.style.display="none",2500);
-}
+function showToast(m){ const t=$("toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",2500); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;", '"':"&quot;","'":"&#039;" }[m])); }
 
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;", '"':"&quot;","'":"&#039;" }[m]));
-}
-
-/* ==========================================================
-   FITUR MONITOR PERILAKU
-========================================================== */
-function updateBehaviorLog(eventType, details, penalty) {
+function updateBehaviorLog(type, details, penalty) {
   if (!state.isStarted || state.ended || !state.uid) return;
-
-  sendToSheets({
-    action: "LOG_BEHAVIOR",
-    uid: state.uid,
-    eventType: eventType,
-    details: details,
-    penalty: penalty
-  });
-
-  showToast(`⚠️ Peringatan: Aktivitas di luar browser terdeteksi. Silakan kembali ke tes.`);
+  sendToSheets({ action: "LOG_BEHAVIOR", uid: state.uid, eventType: type, details: details, penalty: penalty });
+  showToast(`⚠️ Peringatan: Aktivitas di luar browser terdeteksi.`);
 }
 
-window.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    updateBehaviorLog("Pindah Tab/Minimize", "Peserta menyembunyikan tab/membuka tab lain.", 3);
-  }
-});
+window.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") updateBehaviorLog("Pindah Tab", "Peserta menyembunyikan tab.", 3); });
+window.addEventListener("blur", () => { updateBehaviorLog("Hilang Fokus", "Fokus browser hilang.", 2); });
 
-window.addEventListener("blur", () => {
-  updateBehaviorLog("Hilang Fokus", "Fokus browser hilang (peserta membuka aplikasi lain).", 2);
-});
-
-/* ==========================================================
-   EVENT LISTENERS
-========================================================== */
 $("verifyTokenBtn").onclick = async () => {
-  const token = $("token").value.trim();
-  const btn = $("verifyTokenBtn");
-  const errorMsg = $("tokenError");
-
-  if (!token) {
-    errorMsg.textContent = "Token tidak boleh kosong.";
-    return;
-  }
-  if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) {
-    errorMsg.textContent = "SCRIPT_URL belum disetting.";
-    return;
-  }
-
-  btn.textContent = "MEMVERIFIKASI...";
-  btn.disabled = true;
-  errorMsg.textContent = "";
-
+  const token = $("token").value.trim(); const btn = $("verifyTokenBtn"); const err = $("tokenError");
+  if (!token) { err.textContent = "Token tidak boleh kosong."; return; }
+  if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) { err.textContent = "SCRIPT_URL belum disetting."; return; }
+  btn.textContent = "MEMVERIFIKASI..."; btn.disabled = true; err.textContent = "";
   try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: "VERIFY_TOKEN", token: token })
-    });
-    
-    const result = await response.json();
-
-    if (result.status === "success") {
-      showScreen("infoScreen"); 
-    } else {
-      errorMsg.textContent = "Token tidak valid.";
-    }
-  } catch (err) {
-    errorMsg.textContent = "Terjadi kesalahan jaringan/server.";
-  } finally {
-    btn.textContent = "BERIKUTNYA";
-    btn.disabled = false;
-  }
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "VERIFY_TOKEN", token: token }) });
+    const json = await res.json();
+    if (json.status === "success") showScreen("infoScreen"); else err.textContent = "Token tidak valid.";
+  } catch (e) { err.textContent = "Terjadi kesalahan jaringan."; } 
+  finally { btn.textContent = "BERIKUTNYA"; btn.disabled = false; }
 };
 
 $("startBtn").onclick=()=>{
-  const nama=$("inputNama").value.trim();
-  const level=$("inputLevel").value;
-  const jabatan=$("inputJabatan").value.trim();
-
-  if(!nama || !level || !jabatan){
-    $("infoError").textContent="Harap lengkapi semua data diri.";
-    return;
-  }
-
-  const uniqueId = nama.replace(/\s+/g, '').substring(0, 15).toUpperCase() + "-" + Math.floor(1000 + Math.random() * 9000);
-  
-  state.uid = uniqueId;
-  state.candidateData = { nama, level, jabatan };
-  state.ended = false;
-  state.answerSequence = []; 
-  
-  $("candidateDisplay").textContent = nama;
-
-  sendToSheets({
-    action: "INIT",
-    uid: state.uid,
-    nama: nama,
-    level: level,
-    jabatan: jabatan
-  });
-
-  state.isStarted = true;
-
-  updateDesk();
-  showScreen("assessment");
-  showAssessmentView("desk");
-  startTimer();
+  const n=$("inputNama").value.trim(); const l=$("inputLevel").value; const j=$("inputJabatan").value.trim();
+  if(!n || !l || !j){ $("infoError").textContent="Harap lengkapi semua data diri."; return; }
+  state.uid = n.replace(/\s+/g, '').substring(0, 15).toUpperCase() + "-" + Math.floor(1000 + Math.random() * 9000);
+  state.candidateData = { nama:n, level:l, jabatan:j }; state.ended = false; state.answerSequence = []; 
+  $("candidateDisplay").textContent = n;
+  sendToSheets({ action: "INIT", uid: state.uid, nama: n, level: l, jabatan: j });
+  state.isStarted = true; updateDesk(); showScreen("assessment"); showAssessmentView("desk"); startTimer();
 };
 
-$("endTestBtn").onclick=()=>{
-  if(confirm("Apakah Anda yakin ingin mengakhiri tes? Anda tidak dapat kembali mengubah jawaban.")){
-    endAssessment();
-  }
-};
-
-document.querySelectorAll(".channel").forEach(button=>{
-  button.onclick=()=>openChannel(button.dataset.channel);
-});
+$("endTestBtn").onclick=()=>{ if(confirm("Yakin ingin mengakhiri tes?")) endAssessment(); };
+document.querySelectorAll(".channel").forEach(b=>b.onclick=()=>openChannel(b.dataset.channel));
 $("backDeskFromInbox").onclick=()=> { if(!state.ended)showAssessmentView("desk"); };
 $("backInboxBtn").onclick=()=> { if(!state.ended){ renderInbox(); showAssessmentView("inbox"); } };
 $("actionBtn").onclick=openResponse;
 $("cancelResponse").onclick=()=> { if(!state.ended)showAssessmentView("detail"); };
 $("submitResponse").onclick=submitResponse;
-
-window.addEventListener("beforeunload",event=>{
-  if(!state.ended && state.uid){
-    event.preventDefault();
-    event.returnValue="";
-  }
-});
+window.addEventListener("beforeunload",e=>{ if(!state.ended && state.uid){ e.preventDefault(); e.returnValue=""; } });
 </script>
 </body>
 </html>
