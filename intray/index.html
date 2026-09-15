@@ -333,7 +333,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTVhIkV_yGJfjRtVJZW
 
 // Data Multi-Kasus
 // Data Multi-Kasus Terlengkap
-const CASES = [
+let CASES = [
   {
     id: "KASUS-1",
     subtitle: "BAGIAN 1 DARI 2",
@@ -671,6 +671,12 @@ let state = {
 const $ = id => document.getElementById(id);
 const channelNames = { email:"Email Inbox", memo:"Memo Tray", message:"Messages" };
 
+// --- FUNGSI AUTO SAVE KE BROWSER ---
+function saveLocalData() {
+  localStorage.setItem("intray_state", JSON.stringify(state));
+  localStorage.setItem("intray_cases", JSON.stringify(CASES));
+}
+
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
   $(id).classList.add("active");
@@ -685,11 +691,16 @@ function showAssessmentView(view){
 
 function formatTime(s){ return String(Math.floor(s/60)).padStart(2,"0") +":"+String(s%60).padStart(2,"0"); }
 function updateTimer(){ $("timer").textContent=formatTime(state.remaining); $("timer").classList.toggle("warning",state.remaining<=300); }
+
 function startTimer(){ 
   clearInterval(state.timerId); updateTimer(); 
   state.timerId=setInterval(()=>{ 
     if(state.ended)return; 
     state.remaining--; updateTimer(); 
+    
+    // Auto-save setiap 1 detik agar timer akurat jika di-reload
+    saveLocalData();
+
     if(state.remaining<=0){ state.remaining=0; proceedToNextCase(); } 
   }, 1000); 
 }
@@ -699,30 +710,36 @@ function sendToSheets(payload) {
   fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) }).catch(e => console.error(e)); 
 }
 
-// ----------------- MULTI-CASE LOGIC -----------------
 function getActiveInbox() {
   return CASES[state.currentCaseIndex].inbox;
 }
 
 function prepareCaseIntro() {
-  state.isStarted = false; // Matikan proctoring selama di intro
+  state.isStarted = false; 
   clearInterval(state.timerId);
   const currentCase = CASES[state.currentCaseIndex];
   $("caseIntroSubtitle").textContent = currentCase.subtitle;
   $("caseIntroTitle").textContent = currentCase.title;
+  saveLocalData();
   showScreen("caseIntroScreen");
 }
 
-function startCaseDesk() {
+// Ditambahkan parameter isRestored agar timer tidak terulang jika halaman di-reload
+function startCaseDesk(isRestored = false) {
   const currentCase = CASES[state.currentCaseIndex];
-  state.remaining = currentCase.durationSeconds;
+  
+  if (!isRestored) {
+    state.remaining = currentCase.durationSeconds;
+  }
+  
   $("dynamicRoleContext").innerHTML = currentCase.contextHTML;
   $("deskWindowTitle").textContent = currentCase.title;
   
   state.currentChannel = null;
   state.currentItem = null;
-  state.isStarted = true; // Proctoring aktif
+  state.isStarted = true; 
   
+  saveLocalData();
   updateDesk();
   showScreen("assessment");
   showAssessmentView("desk");
@@ -737,13 +754,15 @@ function proceedToNextCase() {
     state.currentCaseIndex++;
     prepareCaseIntro();
   } else {
-    // Semua kasus selesai
     state.ended = true;
-    sendToSheets({ action: "END_TEST", uid: state.uid, remainingSeconds: 0 }); // Fix remaining as 0 for multi-case logic clarity
+    sendToSheets({ action: "END_TEST", uid: state.uid, remainingSeconds: 0 }); 
+    saveLocalData();
     showScreen("endedScreen");
+    // Bersihkan riwayat browser jika sudah tamat
+    localStorage.removeItem("intray_state");
+    localStorage.removeItem("intray_cases");
   }
 }
-// ---------------------------------------------------
 
 function countUnread(c){ return getActiveInbox()[c].filter(x=>x.status==="unread").length; }
 
@@ -765,6 +784,7 @@ function openChannel(c){
   $("inboxSubtitle").textContent=`${getActiveInbox()[c].length} incoming item(s)`;
   renderInbox();
   showAssessmentView("inbox");
+  saveLocalData();
 }
 
 function renderInbox(){
@@ -792,6 +812,7 @@ function openItem(id){
   $("detailMeta").innerHTML = meta;
   $("detailBody").innerHTML=item.body;
   renderDetailState(); updateDesk(); showAssessmentView("detail");
+  saveLocalData();
 }
 
 function renderDetailState(){
@@ -803,7 +824,7 @@ function renderDetailState(){
 }
 
 function stateMessage(s){ return { unread: "This item has not yet been reviewed.", read: "You have opened this item. You can now submit a response.", responded: "A response has been recorded for this item. You can edit your response if needed." }[s]; }
-function openResponse(){ if(state.ended)return; const item=getCurrentItem(); if(item.status==="unread")return; $("responseTitle").textContent= (item.status==="responded" ? "Edit Response — " : "Respond — ") + item.subject; $("responseText").value=item.answer||""; showAssessmentView("response"); }
+function openResponse(){ if(state.ended)return; const item=getCurrentItem(); if(item.status==="unread")return; $("responseTitle").textContent= (item.status==="responded" ? "Edit Response — " : "Respond — ") + item.subject; $("responseText").value=item.answer||""; showAssessmentView("response"); saveLocalData(); }
 
 function submitResponse(){
   if(state.ended)return;
@@ -811,7 +832,10 @@ function submitResponse(){
   if(!ans){ showToast("Tuliskan respon terlebih dahulu."); return; }
   item.answer=ans; item.status="responded";
   if (!state.answerSequence.includes(item.id)) state.answerSequence.push(item.id);
+  
   sendToSheets({ action: "UPDATE_ANSWER", uid: state.uid, itemId: item.id, answer: ans, sequence: state.answerSequence.join(" -> ") });
+  
+  saveLocalData();
   updateDesk(); renderInbox(); showToast("Jawaban tersimpan."); showAssessmentView("inbox");
 }
 
@@ -848,10 +872,9 @@ $("saveInfoBtn").onclick = () => {
   state.candidateData = { nama:n, level:l, jabatan:j }; 
   $("candidateDisplay").textContent = n;
   
-  // Kirim data diri awal
   sendToSheets({ action: "INIT", uid: state.uid, nama: n, level: l, jabatan: j });
   
-  // Tampilkan halaman instruksi umum
+  saveLocalData();
   showScreen("instructionScreen");
 };
 
@@ -861,7 +884,7 @@ $("goToTransitionBtn").onclick = () => {
 };
 
 $("startCaseBtn").onclick = () => {
-  startCaseDesk();
+  startCaseDesk(false);
 };
 
 $("endCaseBtn").onclick=()=>{ 
@@ -871,12 +894,58 @@ $("endCaseBtn").onclick=()=>{
 };
 
 document.querySelectorAll(".channel").forEach(b=>b.onclick=()=>openChannel(b.dataset.channel));
-$("backDeskFromInbox").onclick=()=> { if(!state.ended)showAssessmentView("desk"); };
-$("backInboxBtn").onclick=()=> { if(!state.ended){ renderInbox(); showAssessmentView("inbox"); } };
+$("backDeskFromInbox").onclick=()=> { if(!state.ended)showAssessmentView("desk"); saveLocalData(); };
+$("backInboxBtn").onclick=()=> { if(!state.ended){ renderInbox(); showAssessmentView("inbox"); saveLocalData(); } };
 $("actionBtn").onclick=openResponse;
-$("cancelResponse").onclick=()=> { if(!state.ended)showAssessmentView("detail"); };
+$("cancelResponse").onclick=()=> { if(!state.ended)showAssessmentView("detail"); saveLocalData(); };
 $("submitResponse").onclick=submitResponse;
+
 window.addEventListener("beforeunload",e=>{ if(!state.ended && state.uid){ e.preventDefault(); e.returnValue=""; } });
+
+// --- LOGIKA PEMULIHAN (RESTORE) SAAT HALAMAN DIMUAT (RELOAD) ---
+function restoreLocalData() {
+  const savedState = localStorage.getItem("intray_state");
+  const savedCases = localStorage.getItem("intray_cases");
+  
+  if (savedState && savedCases) {
+    state = JSON.parse(savedState);
+    CASES = JSON.parse(savedCases); // Memulihkan jawaban di kotak masuk
+    
+    if (state.uid) {
+      $("candidateDisplay").textContent = state.candidateData.nama;
+      
+      // Jika sudah tamat
+      if (state.ended) {
+        showScreen("endedScreen");
+      } 
+      // Jika sedang berada di dalam kasus (timer berjalan)
+      else if (state.isStarted) {
+        startCaseDesk(true); // true = Jangan reset waktu
+        
+        // Membuka kembali layar terakhir yang dilihat peserta (Inbox / Detail / Response)
+        if (state.currentChannel && !state.currentItem) openChannel(state.currentChannel);
+        else if (state.currentChannel && state.currentItem) {
+          openItem(state.currentItem);
+          // Cek apakah sedang mengetik respon
+          if ($("responseView").style.display !== "none") {
+            openResponse();
+          }
+        }
+      } 
+      // Jika berada di transisi antar kasus / instruksi
+      else {
+        if (state.currentCaseIndex === 0) {
+          showScreen("instructionScreen");
+        } else {
+          prepareCaseIntro();
+        }
+      }
+    }
+  }
+}
+
+// Jalankan pemulihan saat script dimuat
+restoreLocalData();
 </script>
 </body>
 </html>
