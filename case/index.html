@@ -251,7 +251,7 @@ textarea{min-height:220px;resize:vertical}
     
     <ul class="instruction-list">
       <li><strong>Format Tes:</strong> Anda akan dihadapkan pada <strong>2 (dua) kasus berbeda</strong>. Pada masing-masing kasus, Anda akan memerankan posisi yang berbeda dengan konteks perusahaan yang berbeda pula.</li>
-      <li><strong>Tugas Anda:</strong> Merespons berbagai informasi yang masuk (Email, Memo, dan Pesan Chat) dengan menentukan prioritas, mengambil tindakan langsung, atau mendelegasikan tugas.</li>
+      <li><strong>Tugas Anda:</strong> Merespons berbagai informasi yang masuk (Email, Memo, dan Pesan Chat). Anda dibebaskan untuk menentukan urutan prioritas informasi yang anda respon terlebih dahulu</li>
       <li><strong>Sifat Final:</strong> Jawaban yang sudah disubmit (dikirim) <strong>tidak dapat diubah kembali</strong>. Harap periksa kembali respons Anda sebelum mengirimkannya.</li>
       <li><strong>Batas Waktu:</strong> Setiap kasus memiliki batas waktu pengisian <strong>45 Menit</strong>. Waktu berjalan mundur dan dapat dilihat di pojok kanan atas layar.</li>
       <li><strong>Peralihan Kasus:</strong> Anda tidak dapat kembali ke kasus sebelumnya. Jika waktu habis atau Anda memilih menyelesaikannya lebih awal, Anda akan otomatis diarahkan ke halaman transisi menuju kasus selanjutnya.</li>
@@ -395,7 +395,7 @@ textarea{min-height:220px;resize:vertical}
 /* ==========================================================
    KONFIGURASI
 ========================================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwP6eyh47-u9x61AP9HpBGTpxdPK4I2fdGFzpggUbU5c53ASem6armookbNJ8DXVW6x/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSvIsnJ1YsQRQsZGwhWtC_ZubkDO_occPbMrdnKmZVegCBPYoyd4i5u-sy4shf3UgK/exec"; 
 
 let CASES = [
   {
@@ -951,7 +951,7 @@ window.addEventListener("blur", () => { updateBehaviorLog("Hilang Fokus", "Fokus
 /* ==========================================================
    DAFTAR TOKEN LOKAL (Bisa kamu tambah/ubah sesukamu)
 ========================================================== */
-const VALID_TOKENS = ["HK2026", "ADMIN123", "TEST01", "INTRAY2026"];
+const VALID_TOKENS = ["HKTRAY2026"];
 
 $("verifyTokenBtn").onclick = () => {
   // .toUpperCase() memastikan mau diketik huruf kecil/besar tetap terbaca sama
@@ -972,7 +972,7 @@ $("verifyTokenBtn").onclick = () => {
     } else {
       err.textContent = "Token tidak valid. Silakan coba lagi.";
     }
-    btn.textContent = "BERIKUTNYA"; 
+    btn.textContent = "MASUK"; 
     btn.disabled = false;
   }, 500);
 };
@@ -1011,11 +1011,31 @@ $("submitResponse").onclick=submitResponse;
 
 window.addEventListener("beforeunload",e=>{ if(!state.ended && state.uid){ e.preventDefault(); e.returnValue=""; } });
 
+/* ==========================================================
+   AUTO-SYNC DRAFT KE GOOGLE SHEETS
+========================================================== */
+let typingTimer; // Variabel penyimpan waktu jeda
+const DONE_TYPING_INTERVAL = 3000; // Jeda 3 detik (3000 ms)
+
 $("responseText").addEventListener("input", function() {
   if(!state.ended && state.currentItem) {
     const item = getCurrentItem();
     if(item && item.status !== "responded") {
-      item.draft = this.value; 
+      item.draft = this.value; // 1. Tetap simpan real-time ke browser lokal
+      
+      clearTimeout(typingTimer); // 2. Hapus timer lama jika masih asyik mengetik
+      
+      // 3. Mulai timer baru. Jika 3 detik tidak ada ketikan, kirim ke Google Sheets
+      typingTimer = setTimeout(() => {
+        sendToSheets({ 
+          action: "UPDATE_ANSWER", 
+          uid: state.uid, 
+          itemId: item.id, 
+          // Beri tanda (DRAFT) di Excel agar kamu tahu ini belum disubmit final
+          answer: "[DRAFT] " + item.draft, 
+          sequence: state.answerSequence.join(" -> ") 
+        });
+      }, DONE_TYPING_INTERVAL);
     }
   }
 });
